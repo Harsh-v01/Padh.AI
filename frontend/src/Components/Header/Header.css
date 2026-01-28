@@ -603,6 +603,14 @@
   }
 }
 
+
+
+
+
+
+
+/* ---------------------------------Below is the update new one ------------------------ */
+
 /* Sidebar Item Font Size - Increased */
 .sidebar-item {
   display: flex;
@@ -673,4 +681,99 @@
   letter-spacing: 0.3px;
   margin: 0;
   opacity: 0.6;
+}
+
+
+/* Sidebar - Increased width for desktop */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px; /* Changed from -260px to -270px */
+  width: 300px; /* Changed from 260px to 270px */
+  height: 100vh;
+  background-color: #0f0f0f;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 999;
+  border-right: 1px solid #1c1c1c;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Media queries for responsive adjustments */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 250px; /* Increased from 240px to 250px */
+  }
+  
+  .header {
+    padding: 0 20px;
+  }
+  
+  .logo-wrapper {
+    justify-content: flex-end;
+  }
+  
+  .logo {
+    right: 0;
+  }
+  
+  .logo .padh {
+    font-size: 20px;
+  }
+  
+  .logo .ai {
+    font-size: 18px;
+    top: 0.5px;
+  }
+  
+  .upload-card,
+  .sidebar-section,
+  .sidebar-bottom,
+  .sidebar-footer {
+    padding-left: 18px;
+    padding-right: 18px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  
+  .upload-card {
+    margin-bottom: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 230px; /* Increased from 220px to 230px */
+  }
+  
+  .header {
+    padding: 0 16px;
+  }
+  
+  .menu-btn {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .menu-btn__inner {
+    width: 16px;
+    height: 11px;
+  }
+  
+  .logo .padh {
+    font-size: 19px;
+  }
+  
+  .logo .ai {
+    font-size: 17px;
+    top: 0.3px;
+  }
+  
+  .upload-card,
+  .sidebar-section,
+  .sidebar-bottom,
+  .sidebar-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }
