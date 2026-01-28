@@ -1,0 +1,604 @@
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Header Container - Consistent Black Color with Increased Height */
+.header {
+  width: 100%;
+  height: 70px; /* Increased from 60px to 70px */
+  background-color: #000000; /* Pure black */
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  border-bottom: 2px solid #1c1c1c; /* Thicker 2px border */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+}
+
+/* Remove backdrop-filter and transparency for pure black */
+.header {
+  backdrop-filter: none;
+  background: #000000; /* Solid black */
+}
+
+/* Desktop spacing */
+@media (min-width: 768px) {
+  .header {
+    padding: 0 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .header {
+    padding: 0 48px;
+  }
+}
+
+/* Hamburger Button */
+.menu-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  margin-right: auto;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.menu-btn:hover {
+  background-color: #1E1E1E; /* #1E1E1E for hover */
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.menu-btn.clicked {
+  background-color: #1E1E1E; /* #1E1E1E for clicked state */
+  border: 2px solid #D9D9D9;
+  animation: clickPulse 0.4s ease;
+}
+
+@keyframes clickPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+.menu-btn__inner {
+  width: 22px;
+  height: 16px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.menu-btn__line {
+  display: block;
+  height: 2px;
+  background-color: #D9D9D9;
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+  position: absolute;
+  left: 0;
+}
+
+/* Top line - longer */
+.menu-btn__line.top {
+  width: 100%;
+  top: 0;
+}
+
+/* Bottom line - shorter */
+.menu-btn__line.bottom {
+  width: 14px;
+  bottom: 0;
+}
+
+/* Hamburger state - 2 lines */
+.menu-btn:not(.open) .menu-btn__line.top {
+  transform: translateY(0);
+  width: 100%;
+}
+
+.menu-btn:not(.open) .menu-btn__line.bottom {
+  transform: translateY(0);
+  width: 14px;
+}
+
+/* Cross state - Perfect X from 2 lines */
+.menu-btn.open .menu-btn__line.top {
+  transform: translateY(7px) rotate(45deg);
+  width: 100%;
+}
+
+.menu-btn.open .menu-btn__line.bottom {
+  transform: translateY(-7px) rotate(-45deg);
+  width: 100%;
+}
+
+/* Logo - Keep in corner on all devices with top adjustment */
+.logo-wrapper {
+  display: flex;
+  justify-content: flex-end; /* Always keep in corner */
+  flex: 1;
+  height: 100%;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  height: 100%;
+  position: relative;
+  top: 9px; /* Added top: 9px positioning */
+}
+
+.logo:hover {
+  transform: scale(1.02);
+}
+
+/* Padh - Yellow */
+.padh {
+  font-family: 'Borel', cursive;
+  font-size: 22px; /* Reduced from 26px to 22px */
+  color: #facc15;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  text-shadow: 0 2px 6px rgba(250, 204, 21, 0.3); /* Enhanced shadow for black background */
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* .AI - Off White */
+.ai {
+  font-family: 'Borel', cursive;
+  font-size: 22px; /* Reduced from 26px to 22px */
+  color: #D9D9D9;
+  line-height: 1;
+  font-weight: 400;
+  display: inline-block;
+  vertical-align: middle;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); /* Shadow for better contrast on black */
+}
+
+/* Desktop logo positioning */
+@media (min-width: 768px) {
+  .logo-wrapper {
+    padding-right: 24px;
+  }
+}
+
+/* Sidebar - Black Background */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100vh;
+  background-color: #000000; /* Black background */
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 999;
+  border-right: 1px solid #2a2a2a;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+/* Mobile View - Full Screen Sidebar */
+@media (max-width: 767px) {
+  .sidebar {
+    width: 100%; /* Full width */
+    left: -100%; /* Hide completely off-screen */
+    border-right: none; /* Remove border for full screen */
+    box-shadow: none; /* Remove shadow for full screen */
+  }
+  
+  .sidebar.active {
+    left: 0; /* Show full screen */
+  }
+  
+  /* Adjust content padding for mobile */
+  .sidebar-content {
+    padding: 80px 0 20px; /* Increased padding for taller header */
+  }
+  
+  /* Make upload card full width with margins */
+  .upload-card-btn {
+    margin: 0 20px 20px;
+    min-height: 120px;
+  }
+  
+  /* Adjust header for mobile */
+  .header {
+    padding: 0 16px;
+    height: 65px; /* Slightly increased for mobile */
+    border-bottom: 2px solid #1c1c1c; /* Maintain thicker border on mobile */
+  }
+  
+  /* Adjust logo size for mobile */
+  .padh, .ai {
+    font-size: 20px; /* Adjusted for mobile */
+  }
+  
+  /* Logo stays in corner on mobile */
+  .logo-wrapper {
+    padding-right: 0;
+  }
+}
+
+/* Tablet View */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar {
+    width: 320px; /* Slightly wider on tablet */
+  }
+  
+  .sidebar.active {
+    left: 0;
+  }
+  
+  .upload-card-btn {
+    margin: 0 24px 24px;
+    min-height: 130px;
+  }
+  
+  .padh, .ai {
+    font-size: 20px; /* Adjusted for tablet */
+  }
+  
+  .logo-wrapper {
+    padding-right: 24px;
+  }
+}
+
+/* Desktop View (unchanged) */
+@media (min-width: 1024px) {
+  .sidebar {
+    width: 280px;
+  }
+  
+  .logo-wrapper {
+    padding-right: 24px;
+  }
+}
+
+.sidebar-content {
+  padding: 86px 0 20px; /* Increased padding for taller header (70px + 16px) */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a3a transparent;
+}
+
+.sidebar-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 3px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: #4a4a4a;
+}
+
+/* Upload Card Button - Just Image */
+.upload-card-btn {
+  background: #6E91B5;
+  border-radius: 12px;
+  margin: 0 20px 24px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  min-height: 120px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-card-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(110, 145, 181, 0.4);
+}
+
+.upload-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.upload-card-btn:hover .upload-card-img {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* Sidebar Sections */
+.sidebar-section {
+  padding: 0 20px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 767px) {
+  .sidebar-section {
+    padding: 0 24px; /* More padding on mobile */
+  }
+}
+
+.section-title {
+  color: #8a8a8a;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+  padding-left: 4px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  color: #D9D9D9;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px;
+  margin-bottom: 2px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+@media (max-width: 767px) {
+  .sidebar-item {
+    padding: 14px 16px; /* Larger touch targets on mobile */
+    font-size: 15px; /* Slightly larger text */
+  }
+}
+
+/* #1E1E1E hover color on black background */
+.sidebar-item:hover {
+  background-color: #1E1E1E; /* #1E1E1E on black background */
+  transform: translateX(4px);
+}
+
+/* Active state - Keep blue for active selection */
+.sidebar-item.active {
+  background-color: rgba(59, 130, 246, 0.15); /* Slightly more opaque on black */
+  color: #3b82f6;
+  border-left: 3px solid #3b82f6;
+}
+
+.sidebar-item.active .item-icon {
+  color: #3b82f6;
+}
+
+.item-icon {
+  color: #8a8a8a;
+  width: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+@media (max-width: 767px) {
+  .item-icon {
+    width: 20px; /* Larger icons on mobile */
+  }
+}
+
+.item-text {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+@media (max-width: 767px) {
+  .item-text {
+    font-size: 15px; /* Slightly larger text on mobile */
+  }
+}
+
+.arrow-icon {
+  color: #8a8a8a;
+  opacity: 0.4;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.sidebar-item:hover .arrow-icon {
+  opacity: 0.8;
+  transform: translateX(2px);
+}
+
+/* Logout - Centered Content */
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 20px;
+  border-top: 1px solid #2a2a2a;
+}
+
+@media (max-width: 767px) {
+  .sidebar-bottom {
+    padding: 24px; /* More padding on mobile */
+  }
+}
+
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  background-color: #1E1E1E; /* #1E1E1E on black background */
+  border: 1px solid #2a2a2a; /* Slightly darker border */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  min-height: 44px;
+}
+
+@media (max-width: 767px) {
+  .logout-btn {
+    min-height: 48px; /* Larger touch target on mobile */
+  }
+}
+
+/* Darker hover for logout button */
+.logout-btn:hover {
+  background-color: #252525; /* Darker than #1E1E1E on hover */
+  transform: translateY(-1px);
+  border-color: #3a3a3a;
+}
+
+.logout-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 0;
+}
+
+.logout-icon {
+  color: #D9D9D9;
+  flex-shrink: 0;
+}
+
+.logout-text {
+  color: #facc15;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Footer Text */
+.sidebar-footer {
+  padding: 16px 20px 20px;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .sidebar-footer {
+    padding: 20px 24px 24px; /* More padding on mobile */
+  }
+}
+
+.footer-text {
+  color: #6FAF8E;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Overlay - More prominent on mobile */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 998;
+  animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(2px);
+}
+
+@media (max-width: 767px) {
+  .sidebar-overlay {
+    background: rgba(0, 0, 0, 0.7); /* Darker overlay on mobile */
+    backdrop-filter: blur(4px); /* More blur on mobile */
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive Adjustments for very small screens */
+@media (max-width: 480px) {
+  .sidebar.active {
+    left: 0;
+    width: 100%;
+  }
+  
+  .header {
+    padding: 0 16px;
+    height: 62px; /* Adjusted for very small screens */
+    border-bottom: 2px solid #1c1c1c; /* Maintain thicker border */
+  }
+  
+  .menu-btn {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .menu-btn__inner {
+    width: 22px;
+    height: 16px;
+  }
+  
+  .padh, .ai {
+    font-size: 19px; /* Adjusted for very small screens */
+  }
+  
+  .upload-card-btn {
+    margin: 0 20px 20px;
+    min-height: 110px;
+    border-radius: 10px;
+  }
+  
+  .sidebar-section {
+    padding: 0 20px;
+  }
+  
+  .sidebar-item {
+    padding: 13px 15px;
+  }
+  
+  /* Logo stays in corner on very small screens */
+  .logo-wrapper {
+    padding-right: 0;
+  }
+}
