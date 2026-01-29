@@ -24,8 +24,9 @@ function QuickActions() {
           <div className="qa-cards">
             {/* Upload Card */}
             <div 
-              className="qa-card upload"
+              className="qa-card upload floating-animation"
               onClick={() => handleCardClick('Upload Document')}
+              style={{ '--delay': '0s' }}
             >
               <div className="card-content">
                 <div className="card-text">
@@ -44,8 +45,9 @@ function QuickActions() {
 
             {/* Summary Card */}
             <div 
-              className="qa-card summary"
+              className="qa-card summary floating-animation"
               onClick={() => handleCardClick('AI Summary')}
+              style={{ '--delay': '0.2s' }}
             >
               <div className="card-content">
                 <div className="card-text">
@@ -64,8 +66,9 @@ function QuickActions() {
 
             {/* Quiz Card */}
             <div 
-              className="qa-card quiz"
+              className="qa-card quiz floating-animation"
               onClick={() => handleCardClick('Practice Quiz')}
+              style={{ '--delay': '0.4s' }}
             >
               <div className="card-content">
                 <div className="card-text">
@@ -84,8 +87,9 @@ function QuickActions() {
 
             {/* Assistant Card */}
             <div 
-              className="qa-card assistant"
+              className="qa-card assistant floating-animation"
               onClick={() => handleCardClick('AI Assistant')}
+              style={{ '--delay': '0.6s' }}
             >
               <div className="card-content">
                 <div className="card-text">
