@@ -179,11 +179,11 @@
   opacity: 0.9;
 }
 
-/* Icons */
+/* Icons - Changed white to black */
 .qa-card.upload .qa-icon,
 .qa-card.summary .qa-icon,
 .qa-card.assistant .qa-icon {
-  color: #ffffff;
+  color: #000000; /* Changed from #ffffff to #000000 */
 }
 
 .qa-card.quiz .qa-icon {
