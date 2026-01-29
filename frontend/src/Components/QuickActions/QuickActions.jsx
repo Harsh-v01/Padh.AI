@@ -11,7 +11,43 @@ import {
 function QuickActions() {
   const handleCardClick = (action) => {
     console.log(`Clicked: ${action}`);
-    // Add your click handler logic here
+    
+    // Handle upload separately
+    if (action === 'Upload Document') {
+      handleUpload();
+    }
+  };
+
+  const handleUpload = () => {
+    // Create a file input element
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.doc,.docx,.txt,.jpg,.jpeg,.png';
+    
+    input.onchange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const fileName = file.name;
+        const fileType = fileName.split('.').pop().toLowerCase();
+        
+        // Add to recent documents
+        if (window.addRecentDocument) {
+          window.addRecentDocument(fileName, fileType);
+        }
+        
+        // Simulate upload process
+        console.log(`Uploading: ${fileName}`);
+        alert(`Document "${fileName}" uploaded successfully!`);
+        
+        // Here you would typically:
+        // 1. Upload to your backend server
+        // 2. Process the file
+        // 3. Update state/redux store
+        // 4. Show success message
+      }
+    };
+    
+    input.click();
   };
 
   return (

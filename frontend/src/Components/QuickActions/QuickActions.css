@@ -5,17 +5,16 @@
 
 .quick-actions {
   width: 100%;
-  padding: 0 48px 32px;
+  padding: 0;
   box-sizing: border-box;
   font-family: 'Anybody', -apple-system, BlinkMacSystemFont, sans-serif;
   position: relative;
   margin-top: 0;
 }
 
-/* Container - Fixed width for half-screen on desktop */
+/* Container - Remove max-width for layout compatibility */
 .qa-container {
   width: 100%;
-  max-width: 480px;
   margin: 0;
 }
 
@@ -303,15 +302,19 @@
   transform: translateY(-1px);
 }
 
-/* Desktop - Half screen layout */
+/* =========================================== */
+/* RESPONSIVE STYLES - ADJUSTED FOR LAYOUT */
+/* =========================================== */
+
+/* Desktop - Inside layout */
 @media (min-width: 1024px) {
   .quick-actions-wrapper {
-    width: 50%;
-    padding-right: 24px;
+    width: 100%;
+    padding-right: 0;
   }
   
   .quick-actions {
-    padding: 0 0 40px 48px;
+    padding: 0;
   }
   
   .qa-container {
@@ -340,14 +343,14 @@
   }
 }
 
-/* Tablet */
+/* Tablet - Stacked layout */
 @media (min-width: 768px) and (max-width: 1023px) {
   .quick-actions {
-    padding: 0 32px 32px;
+    padding: 0;
   }
   
   .qa-container {
-    max-width: 480px;
+    max-width: 100%;
   }
   
   .qa-scroll-container {
@@ -373,14 +376,14 @@
   }
 }
 
-/* Mobile - Horizontal scrolling */
+/* Mobile - Inside layout */
 @media (max-width: 767px) {
   .quick-actions-wrapper {
     width: 100%;
   }
   
   .quick-actions {
-    padding: 0 24px 28px;
+    padding: 0;
   }
   
   .qa-header {
@@ -396,9 +399,9 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 8px;
-    margin: 0 -8px;
-    width: calc(100% + 16px);
-    padding-left: 8px;
+    margin: 0;
+    width: 100%;
+    padding-left: 0;
   }
   
   .qa-scroll-container::-webkit-scrollbar {
@@ -415,7 +418,7 @@
     grid-template-columns: none;
     width: max-content;
     gap: 10px;
-    padding-right: 8px;
+    padding-right: 0;
   }
   
   .qa-card {
@@ -474,7 +477,7 @@
 /* Small Mobile */
 @media (max-width: 480px) {
   .quick-actions {
-    padding: 0 20px 24px;
+    padding: 0;
   }
   
   .qa-card {

@@ -1,0 +1,90 @@
+/* MainLayout.css */
+
+.main-layout-wrapper {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background-color: #000000;
+}
+
+.main-layout-container {
+  display: flex;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0;
+  gap: 0;
+}
+
+/* Left Panel - Quick Actions */
+.quick-actions-panel {
+  flex: 1;
+  min-width: 0;
+  padding: 0 48px 32px 48px;
+  /* REMOVED: border-right: 1px solid #2a2a2a; */
+}
+
+/* Right Panel - Recent Documents */
+.recent-docs-panel {
+  flex: 1;
+  min-width: 0;
+  padding: 0 48px 32px 48px;
+  overflow-y: auto;
+}
+
+/* Desktop Layout */
+@media (min-width: 1024px) {
+  .main-layout-container {
+    gap: 0;
+  }
+  
+  .quick-actions-panel {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  
+  .recent-docs-panel {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+/* Tablet Layout */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .main-layout-container {
+    flex-direction: column;
+  }
+  
+  .quick-actions-panel {
+    padding: 0 32px 24px 32px;
+    /* REMOVED: border-bottom: 1px solid #2a2a2a; */
+  }
+  
+  .recent-docs-panel {
+    padding: 0 32px 24px 32px;
+  }
+}
+
+/* Mobile Layout */
+@media (max-width: 767px) {
+  .main-layout-container {
+    flex-direction: column;
+  }
+  
+  .quick-actions-panel {
+    padding: 0 24px 20px 24px;
+    /* REMOVED: border-bottom: 1px solid #2a2a2a; */
+  }
+  
+  .recent-docs-panel {
+    padding: 0 24px 20px 24px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .quick-actions-panel,
+  .recent-docs-panel {
+    padding: 0 20px 16px 20px;
+  }
+}

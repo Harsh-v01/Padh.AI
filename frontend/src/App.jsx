@@ -1,13 +1,13 @@
 import Header from './Components/Header/Header'
 import HeadingLayout from './Components/HeadingLayout/HeadingLayout';
-import QuickActions from './Components/QuickActions/QuickActions';
+import MainLayout from './Components/MainLayout/MainLayout';
 
 function App() {
   return (
     <>
       <Header />
       <HeadingLayout />
-      <QuickActions />
+      <MainLayout />
     </>
   )
 }
