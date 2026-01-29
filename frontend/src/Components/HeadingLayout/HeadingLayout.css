@@ -36,10 +36,10 @@
   gap: 1px;
 }
 
-/* Padh - Yellow, 27px, Borel font */
+/* Padh - Yellow, 27.5px, Borel font */
 .brand.padh {
   font-family: 'Borel', cursive;
-  font-size: 27px; /* 27px for Padh.AI */
+  font-size: 27.5px; /* 27.5px for Padh.AI */
   color: #facc15;
   font-weight: 400;
   letter-spacing: 0.3px;
@@ -49,10 +49,10 @@
   top: 2px;
 }
 
-/* Dot - Yellow, 27px, Borel font */
+/* Dot - Yellow, 27.5px, Borel font */
 .brand.dot {
   font-family: 'Borel', cursive;
-  font-size: 27px; /* 27px for Padh.AI */
+  font-size: 27.5px; /* 27.5px for Padh.AI */
   color: #facc15;
   font-weight: 400;
   line-height: 1;
@@ -60,10 +60,10 @@
   top: 2px;
 }
 
-/* AI - Yellow, 27px, Borel font */
+/* AI - Yellow, 27.5px, Borel font */
 .brand.ai {
   font-family: 'Borel', cursive;
-  font-size: 27px; /* 27px for Padh.AI */
+  font-size: 27.5px; /* 27.5px for Padh.AI */
   color: #facc15;
   font-weight: 400;
   line-height: 1;
@@ -97,7 +97,7 @@
   .brand.padh,
   .brand.dot,
   .brand.ai {
-    font-size: 25px; /* Scaled down proportionally for tablet */
+    font-size: 25.5px; /* Scaled down proportionally for tablet */
     top: 1px;
   }
   
@@ -122,7 +122,7 @@
   .brand.padh,
   .brand.dot,
   .brand.ai {
-    font-size: 23px; /* Scaled down proportionally for mobile */
+    font-size: 23.5px; /* Scaled down proportionally for mobile */
     top: 1px;
   }
   
@@ -146,7 +146,7 @@
   .brand.padh,
   .brand.dot,
   .brand.ai {
-    font-size: 21px; /* Scaled down proportionally for small mobile */
+    font-size: 21.5px; /* Scaled down proportionally for small mobile */
     top: 0.5px;
   }
   
