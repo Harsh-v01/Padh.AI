@@ -1,4 +1,6 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { fetchRecentDocuments } from '../api/client';
 
 const DocumentsContext = createContext(null);
 
@@ -6,10 +8,23 @@ export function DocumentsProvider({ children }) {
   const [documents, setDocuments] = useState([]);
 
   useEffect(() => {
-    const savedDocs = localStorage.getItem('recentDocuments');
-    if (savedDocs) {
-      setDocuments(JSON.parse(savedDocs));
-    }
+    const loadDocuments = async () => {
+      const savedDocs = localStorage.getItem('recentDocuments');
+      if (savedDocs) {
+        setDocuments(JSON.parse(savedDocs));
+      }
+
+      try {
+        const remoteDocs = await fetchRecentDocuments();
+        if (Array.isArray(remoteDocs)) {
+          setDocuments(remoteDocs);
+        }
+      } catch (error) {
+        console.warn('Unable to load remote documents yet.', error);
+      }
+    };
+
+    loadDocuments();
   }, []);
 
   useEffect(() => {
