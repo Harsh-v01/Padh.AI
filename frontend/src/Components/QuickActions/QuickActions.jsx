@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import './QuickActions.css';
 import {
   FiUpload,
@@ -7,14 +8,31 @@ import {
   FiChevronRight,
   FiZap
 } from 'react-icons/fi';
+import { useDocuments } from '../../context/DocumentsContext';
 
 function QuickActions() {
+  const navigate = useNavigate();
+  const { addDocument } = useDocuments();
+
   const handleCardClick = (action) => {
     console.log(`Clicked: ${action}`);
     
     // Handle upload separately
     if (action === 'Upload Document') {
       handleUpload();
+      return;
+    }
+
+    if (action === 'AI Summary') {
+      navigate('/summary');
+    }
+
+    if (action === 'Practice Quiz') {
+      navigate('/quiz');
+    }
+
+    if (action === 'AI Assistant') {
+      navigate('/assistant');
     }
   };
 
@@ -31,13 +49,17 @@ function QuickActions() {
         const fileType = fileName.split('.').pop().toLowerCase();
         
         // Add to recent documents
-        if (window.addRecentDocument) {
-          window.addRecentDocument(fileName, fileType);
-        }
+        addDocument({
+          id: Date.now(),
+          name: fileName,
+          date: new Date().toISOString().split('T')[0],
+          type: fileType
+        });
         
         // Simulate upload process
         console.log(`Uploading: ${fileName}`);
         alert(`Document "${fileName}" uploaded successfully!`);
+        navigate('/upload');
         
         // Here you would typically:
         // 1. Upload to your backend server
