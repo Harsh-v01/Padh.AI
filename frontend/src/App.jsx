@@ -4,12 +4,14 @@ import MainLayout from './Components/MainLayout/MainLayout';
 
 function App() {
   return (
-    <>
-      <Header />
-      <HeadingLayout />
-      <MainLayout />
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/upload" element={<Upload />} />
+      <Route path="/summary" element={<Summary />} />
+      <Route path="/quiz" element={<Quiz />} />
+      <Route path="/assistant" element={<Assistant />} />
+    </Routes>
+  );
 }
 
 export default App
