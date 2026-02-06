@@ -7,16 +7,52 @@ import {
   FiChevronRight,
   FiZap
 } from 'react-icons/fi';
+import { calculatePlagiarismScore } from '../../utils/pipeline';
+import { useDocuments } from '../../context/useDocuments';
 
 function QuickActions() {
+  const { addDocument } = useDocuments();
+
+  const scrollToSection = (sectionId) => {
+    const target = document.getElementById(sectionId);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   const handleCardClick = (action) => {
     console.log(`Clicked: ${action}`);
     
     // Handle upload separately
     if (action === 'Upload Document') {
       handleUpload();
+      return;
+    }
+
+    if (action === 'AI Summary') {
+      scrollToSection('section-generation');
+    }
+
+    if (action === 'Practice Quiz') {
+      scrollToSection('section-generation');
+    }
+
+    if (action === 'AI Assistant') {
+      scrollToSection('section-generation');
     }
   };
+
+  const readFileText = (file) =>
+    new Promise((resolve) => {
+      if (!file) {
+        resolve('');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result?.toString() || '');
+      reader.onerror = () => resolve('');
+      reader.readAsText(file);
+    });
 
   const handleUpload = () => {
     // Create a file input element
@@ -24,20 +60,30 @@ function QuickActions() {
     input.type = 'file';
     input.accept = '.pdf,.doc,.docx,.txt,.jpg,.jpeg,.png';
     
-    input.onchange = (event) => {
+    input.onchange = async (event) => {
       const file = event.target.files[0];
       if (file) {
         const fileName = file.name;
         const fileType = fileName.split('.').pop().toLowerCase();
+        const content = await readFileText(file);
+        const plagiarismScore = calculatePlagiarismScore(content);
         
         // Add to recent documents
-        if (window.addRecentDocument) {
-          window.addRecentDocument(fileName, fileType);
-        }
+        const documentId = Date.now();
+        addDocument({
+          id: documentId,
+          name: fileName,
+          date: new Date().toISOString().split('T')[0],
+          type: fileType,
+          content,
+          plagiarismScore,
+          plagiarismFlag: plagiarismScore > 10
+        });
         
         // Simulate upload process
         console.log(`Uploading: ${fileName}`);
         alert(`Document "${fileName}" uploaded successfully!`);
+        scrollToSection('section-plagiarism');
         
         // Here you would typically:
         // 1. Upload to your backend server
