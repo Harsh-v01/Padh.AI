@@ -10,7 +10,14 @@ export function DocumentsProvider({ children }) {
     const loadDocuments = async () => {
       const savedDocs = localStorage.getItem('recentDocuments');
       if (savedDocs) {
-        setDocuments(JSON.parse(savedDocs));
+        try {
+          const parsed = JSON.parse(savedDocs);
+          if (Array.isArray(parsed)) {
+            setDocuments(parsed);
+          }
+        } catch (error) {
+          console.warn('Unable to parse saved documents.', error);
+        }
       }
 
       try {
