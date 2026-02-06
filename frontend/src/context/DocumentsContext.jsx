@@ -4,6 +4,7 @@ import { fetchRecentDocuments } from '../api/client';
 
 export function DocumentsProvider({ children }) {
   const [documents, setDocuments] = useState([]);
+  const [activeDocumentId, setActiveDocumentId] = useState('');
 
   useEffect(() => {
     const loadDocuments = async () => {
@@ -31,18 +32,21 @@ export function DocumentsProvider({ children }) {
 
   const addDocument = (doc) => {
     setDocuments((prev) => [doc, ...prev]);
+    setActiveDocumentId(doc.id);
   };
 
   const upsertDocument = (doc) => {
     setDocuments((prev) => {
       const existingIndex = prev.findIndex((item) => item.id === doc.id);
-      if (existingIndex === -1) {https://github.com/Harsh-v01/Padh.AI/pull/3/conflict?name=frontend%252Fsrc%252Fcontext%252FDocumentsContext.jsx&base_oid=256e47a9d64d20d78f977c55bcfdce9aea611724&head_oid=8a4e65d84d922b59d2791c325dff1b2d5c203bf2
+      if (existingIndex === -1) {
+        setActiveDocumentId(doc.id);
         return [doc, ...prev];
       }
       const updated = [...prev];
       updated[existingIndex] = { ...updated[existingIndex], ...doc };
       return updated;
     });
+    setActiveDocumentId(doc.id);
   };
 
   const updateDocument = (id, updates) => {
@@ -55,11 +59,13 @@ export function DocumentsProvider({ children }) {
     () => ({
       documents,
       setDocuments,
+      activeDocumentId,
+      setActiveDocumentId,
       addDocument,
       upsertDocument,
       updateDocument
     }),
-    [documents]
+    [documents, activeDocumentId]
   );
 
   return <DocumentsContext.Provider value={value}>{children}</DocumentsContext.Provider>;

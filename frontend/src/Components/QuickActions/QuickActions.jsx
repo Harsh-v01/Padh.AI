@@ -8,6 +8,7 @@ import {
   FiChevronRight,
   FiZap
 } from 'react-icons/fi';
+import { calculatePlagiarismScore } from '../../utils/pipeline';
 import { useDocuments } from '../../context/useDocuments';
 
 function QuickActions() {
@@ -30,17 +31,29 @@ function QuickActions() {
     }
 
     if (action === 'AI Summary') {
-      scrollToSection('phase-6-structure');
+      scrollToSection('section-generation');
     }
 
     if (action === 'Practice Quiz') {
-      scrollToSection('phase-6-structure');
+      scrollToSection('section-generation');
     }
 
     if (action === 'AI Assistant') {
-      scrollToSection('phase-5-rag');
+      scrollToSection('section-generation');
     }
   };
+
+  const readFileText = (file) =>
+    new Promise((resolve) => {
+      if (!file) {
+        resolve('');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result?.toString() || '');
+      reader.onerror = () => resolve('');
+      reader.readAsText(file);
+    });
 
   const handleUpload = () => {
     // Create a file input element
@@ -48,24 +61,30 @@ function QuickActions() {
     input.type = 'file';
     input.accept = '.pdf,.doc,.docx,.txt,.jpg,.jpeg,.png';
     
-    input.onchange = (event) => {
+    input.onchange = async (event) => {
       const file = event.target.files[0];
       if (file) {
         const fileName = file.name;
         const fileType = fileName.split('.').pop().toLowerCase();
+        const content = await readFileText(file);
+        const plagiarismScore = calculatePlagiarismScore(content);
         
         // Add to recent documents
+        const documentId = Date.now();
         addDocument({
-          id: Date.now(),
+          id: documentId,
           name: fileName,
           date: new Date().toISOString().split('T')[0],
-          type: fileType
+          type: fileType,
+          content,
+          plagiarismScore,
+          plagiarismFlag: plagiarismScore > 10
         });
         
         // Simulate upload process
         console.log(`Uploading: ${fileName}`);
         alert(`Document "${fileName}" uploaded successfully!`);
-        scrollToSection('phase-1-upload');
+        scrollToSection('section-plagiarism');
         
         // Here you would typically:
         // 1. Upload to your backend server

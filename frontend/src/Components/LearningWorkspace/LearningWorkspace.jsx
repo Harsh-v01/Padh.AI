@@ -12,8 +12,13 @@ import {
 import { useDocuments } from '../../context/useDocuments';
 
 function LearningWorkspace() {
-  const { documents, upsertDocument, updateDocument } = useDocuments();
-  const [selectedId, setSelectedId] = useState('');
+  const {
+    documents,
+    activeDocumentId,
+    setActiveDocumentId,
+    upsertDocument,
+    updateDocument
+  } = useDocuments();
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState('idle');
   const [retrievalQuery, setRetrievalQuery] = useState('');
@@ -21,11 +26,13 @@ function LearningWorkspace() {
   const [generationOutput, setGenerationOutput] = useState('');
   const [structuredSummary, setStructuredSummary] = useState([]);
   const [quizOutput, setQuizOutput] = useState([]);
+  const [previousYearOutput, setPreviousYearOutput] = useState([]);
 
   const selectedDocument = useMemo(
-    () => documents.find((doc) => doc.id === selectedId),
-    [documents, selectedId]
+    () => documents.find((doc) => doc.id === activeDocumentId),
+    [documents, activeDocumentId]
   );
+  const plagiarismScore = selectedDocument?.plagiarismScore ?? null;
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0] || null);
@@ -57,10 +64,12 @@ function LearningWorkspace() {
       name: selectedFile.name,
       date: new Date().toISOString().split('T')[0],
       type: selectedFile.name.split('.').pop()?.toLowerCase() || 'file',
-      content: content || `Extracted text placeholder for ${selectedFile.name}.`
+      content: content || `Extracted text placeholder for ${selectedFile.name}.`,
+      plagiarismScore: calculatePlagiarismScore(content || ''),
+      plagiarismFlag: calculatePlagiarismScore(content || '') > 10
     };
     upsertDocument(doc);
-    setSelectedId(doc.id);
+    setActiveDocumentId(doc.id);
     setUploadStatus('done');
   };
 
@@ -114,26 +123,54 @@ function LearningWorkspace() {
       return;
     }
     setStructuredSummary(generateStructuredSummary(baseText));
+  };
+
+  const handleQuizOutput = () => {
+    const baseText = selectedDocument?.cleanedContent || selectedDocument?.content;
+    if (!baseText) {
+      return;
+    }
     setQuizOutput(generateQuizFromText(baseText, 5));
   };
 
-  const plagiarismScore = selectedDocument?.content
-    ? calculatePlagiarismScore(selectedDocument.content)
-    : null;
+  const handlePreviousYearOutput = () => {
+    const baseText = selectedDocument?.cleanedContent || selectedDocument?.content;
+    if (!baseText) {
+      return;
+    }
+    setPreviousYearOutput(generateQuizFromText(baseText, 4));
+  };
+
+  const handleFullRun = () => {
+    handleCleanAndChunk();
+    handleEmbeddings();
+    setRetrievalQuery('Key themes and exam focus');
+    setTimeout(() => {
+      handleRetrieval();
+      handleGeneration();
+      handleStructuredOutput();
+      handleQuizOutput();
+      handlePreviousYearOutput();
+    }, 200);
+  };
+
+  const canProcess = selectedDocument?.plagiarismScore != null && !selectedDocument?.plagiarismFlag;
 
   return (
     <div className="workspace">
       <div className="workspace-header">
         <div>
-          <h2>Learning Pipeline Workspace</h2>
-          <p>Follow phases 1 to 6 to transform documents into structured learning assets.</p>
+          <h2>Processing Workspace</h2>
+          <p>
+            Upload a document, check originality, and then choose what you want to generate.
+          </p>
         </div>
         <div className="workspace-select">
           <label htmlFor="document-select">Active Document</label>
           <select
             id="document-select"
-            value={selectedId}
-            onChange={(event) => setSelectedId(event.target.value)}
+            value={activeDocumentId}
+            onChange={(event) => setActiveDocumentId(event.target.value)}
           >
             <option value="">Select a document</option>
             {documents.map((doc) => (
@@ -146,9 +183,9 @@ function LearningWorkspace() {
       </div>
 
       <div className="workspace-grid">
-        <section id="phase-1-upload" className="workspace-card">
-          <h3>Phase 1 · Document Ingestion</h3>
-          <p>Upload documents, extract text, and validate originality.</p>
+        <section id="section-upload" className="workspace-card">
+          <h3>Upload Document</h3>
+          <p>Upload files and extract text automatically.</p>
           <form onSubmit={handleUpload} className="workspace-form">
             <input
               type="file"
@@ -159,102 +196,108 @@ function LearningWorkspace() {
           </form>
           <div className="workspace-meta">
             <span>Status: {uploadStatus}</span>
-            {plagiarismScore !== null && (
-              <span>Plagiarism check: {plagiarismScore}% overlap</span>
-            )}
+            <span>Extracted characters: {selectedDocument?.content?.length || 0}</span>
           </div>
         </section>
 
-        <section id="phase-2-clean" className="workspace-card">
-          <h3>Phase 2 · Cleaning & Chunking</h3>
-          <p>Normalize text and split it into learning-sized chunks.</p>
-          <button type="button" onClick={handleCleanAndChunk}>
-            Run Cleaning + Chunking
-          </button>
+        <section id="section-plagiarism" className="workspace-card">
+          <h3>Plagiarism Status</h3>
+          <p>Originality is checked automatically after upload.</p>
           <div className="workspace-meta">
-            <span>Chunks: {selectedDocument?.chunks?.length || 0}</span>
-            <span>Cleaned length: {selectedDocument?.cleanedContent?.length || 0}</span>
+            <span>Similarity score: {plagiarismScore ?? '--'}%</span>
+            <span className={selectedDocument?.plagiarismFlag ? 'danger' : 'safe'}>
+              {selectedDocument?.plagiarismScore === undefined
+                ? 'Upload a document to check plagiarism'
+                : selectedDocument?.plagiarismFlag
+                ? 'Plagiarism detected - processing stopped'
+                : 'Clear to proceed'}
+            </span>
           </div>
         </section>
 
-        <section id="phase-3-embed" className="workspace-card">
-          <h3>Phase 3 · Embeddings & Storage</h3>
-          <p>Create vector representations for semantic search readiness.</p>
-          <button type="button" onClick={handleEmbeddings}>
-            Generate Embeddings
-          </button>
-          <div className="workspace-meta">
-            <span>Embedding rows: {selectedDocument?.embeddings?.length || 0}</span>
-          </div>
-        </section>
-
-        <section id="phase-4-retrieval" className="workspace-card">
-          <h3>Phase 4 · Retrieval</h3>
-          <p>Find the most relevant chunks using similarity search.</p>
-          <div className="workspace-form">
-            <input
-              type="text"
-              placeholder="Ask a question..."
-              value={retrievalQuery}
-              onChange={(event) => setRetrievalQuery(event.target.value)}
-            />
-            <button type="button" onClick={handleRetrieval}>
-              Retrieve Top Chunks
+        <section id="section-generation" className="workspace-card">
+          <h3>Choose What to Generate</h3>
+          <p>Pick the outputs you want once originality is verified.</p>
+          <div className="workspace-actions">
+            <button type="button" onClick={handleStructuredOutput} disabled={!canProcess}>
+              Generate Summary
+            </button>
+            <button type="button" onClick={handleQuizOutput} disabled={!canProcess}>
+              Generate Quiz
+            </button>
+            <button type="button" onClick={handlePreviousYearOutput} disabled={!canProcess}>
+              Previous-Year Questions
+            </button>
+            <button type="button" onClick={handleFullRun} disabled={!canProcess}>
+              Run Full Flow
             </button>
           </div>
-          <ul className="workspace-list">
-            {retrievalResults.map((result, index) => (
-              <li key={`${result.score}-${index}`}>
-                <strong>Score {result.score.toFixed(2)}</strong>
-                <p>{result.chunk}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section id="phase-5-rag" className="workspace-card">
-          <h3>Phase 5 · Augmented Generation</h3>
-          <p>Generate grounded answers with retrieved context.</p>
-          <button type="button" onClick={handleGeneration}>
-            Generate Grounded Answer
-          </button>
+          {!canProcess && (
+            <p className="workspace-muted">Processing options unlock after a clean plagiarism check.</p>
+          )}
           {generationOutput && <pre className="workspace-output">{generationOutput}</pre>}
         </section>
 
-        <section id="phase-6-structure" className="workspace-card">
-          <h3>Phase 6 · Structured Output</h3>
-          <p>Deliver summaries and quizzes that are exam-ready.</p>
-          <button type="button" onClick={handleStructuredOutput}>
-            Build Structured Output
-          </button>
-          {structuredSummary.length > 0 && (
+        <section id="section-dashboard" className="workspace-card workspace-card-wide">
+          <div className="dashboard-header">
+            <div>
+              <h3>Dashboard Outputs</h3>
+              <p>Summary, quiz questions, and previous-year style questions.</p>
+            </div>
+            <div className="dashboard-meta">
+              <span>Storage: {structuredSummary.length ? 'Saved' : 'Pending'}</span>
+              <span>Last update: {selectedDocument?.date || '--'}</span>
+            </div>
+          </div>
+          <div className="dashboard-grid">
             <div className="workspace-output">
               <h4>Summary</h4>
-              <ol>
-                {structuredSummary.map((line) => (
-                  <li key={line}>{line}</li>
-                ))}
-              </ol>
+              {structuredSummary.length > 0 ? (
+                <ol>
+                  {structuredSummary.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ol>
+              ) : (
+                <p>No summary generated yet.</p>
+              )}
             </div>
-          )}
-          {quizOutput.length > 0 && (
             <div className="workspace-output">
-              <h4>Quiz</h4>
-              <ol>
-                {quizOutput.map((question) => (
-                  <li key={question.id}>
-                    <p>{question.question}</p>
-                    <ul>
-                      {question.options.map((option) => (
-                        <li key={option}>{option}</li>
-                      ))}
-                    </ul>
-                    <p className="workspace-answer">Answer: {question.answer}</p>
-                  </li>
-                ))}
-              </ol>
+              <h4>Quiz Questions</h4>
+              {quizOutput.length > 0 ? (
+                <ol>
+                  {quizOutput.map((question) => (
+                    <li key={question.id}>
+                      <p>{question.question}</p>
+                      <ul>
+                        {question.options.map((option) => (
+                          <li key={option}>{option}</li>
+                        ))}
+                      </ul>
+                      <p className="workspace-answer">Answer: {question.answer}</p>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p>No quiz generated yet.</p>
+              )}
             </div>
-          )}
+            <div className="workspace-output">
+              <h4>Previous-Year Style Questions</h4>
+              {previousYearOutput.length > 0 ? (
+                <ol>
+                  {previousYearOutput.map((question) => (
+                    <li key={question.id}>
+                      <p>{question.question}</p>
+                      <p className="workspace-answer">Answer: {question.answer}</p>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p>No previous-year questions generated yet.</p>
+              )}
+            </div>
+          </div>
         </section>
       </div>
     </div>
