@@ -7,14 +7,37 @@ import {
   FiChevronRight,
   FiZap
 } from 'react-icons/fi';
+import { useDocuments } from '../../context/useDocuments';
 
 function QuickActions() {
+  const { addDocument } = useDocuments();
+
+  const scrollToSection = (sectionId) => {
+    const target = document.getElementById(sectionId);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   const handleCardClick = (action) => {
     console.log(`Clicked: ${action}`);
     
     // Handle upload separately
     if (action === 'Upload Document') {
       handleUpload();
+      return;
+    }
+
+    if (action === 'AI Summary') {
+      scrollToSection('phase-6-structure');
+    }
+
+    if (action === 'Practice Quiz') {
+      scrollToSection('phase-6-structure');
+    }
+
+    if (action === 'AI Assistant') {
+      scrollToSection('phase-5-rag');
     }
   };
 
@@ -31,13 +54,17 @@ function QuickActions() {
         const fileType = fileName.split('.').pop().toLowerCase();
         
         // Add to recent documents
-        if (window.addRecentDocument) {
-          window.addRecentDocument(fileName, fileType);
-        }
+        addDocument({
+          id: Date.now(),
+          name: fileName,
+          date: new Date().toISOString().split('T')[0],
+          type: fileType
+        });
         
         // Simulate upload process
         console.log(`Uploading: ${fileName}`);
         alert(`Document "${fileName}" uploaded successfully!`);
+        scrollToSection('phase-1-upload');
         
         // Here you would typically:
         // 1. Upload to your backend server
