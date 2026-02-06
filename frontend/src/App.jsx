@@ -1,9 +1,6 @@
-import { Route, Routes } from 'react-router-dom';
-import Home from './pages/Home';
-import Upload from './pages/Upload';
-import Summary from './pages/Summary';
-import Quiz from './pages/Quiz';
-import Assistant from './pages/Assistant';
+import Header from './Components/Header/Header';
+import HeadingLayout from './Components/HeadingLayout/HeadingLayout';
+import MainLayout from './Components/MainLayout/MainLayout';
 
 function App() {
   return (

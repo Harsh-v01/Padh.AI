@@ -8,11 +8,17 @@ import {
   FiChevronRight,
   FiZap
 } from 'react-icons/fi';
-import { useDocuments } from '../../context/DocumentsContext';
+import { useDocuments } from '../../context/useDocuments';
 
 function QuickActions() {
-  const navigate = useNavigate();
   const { addDocument } = useDocuments();
+
+  const scrollToSection = (sectionId) => {
+    const target = document.getElementById(sectionId);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const handleCardClick = (action) => {
     console.log(`Clicked: ${action}`);
@@ -24,15 +30,15 @@ function QuickActions() {
     }
 
     if (action === 'AI Summary') {
-      navigate('/summary');
+      scrollToSection('phase-6-structure');
     }
 
     if (action === 'Practice Quiz') {
-      navigate('/quiz');
+      scrollToSection('phase-6-structure');
     }
 
     if (action === 'AI Assistant') {
-      navigate('/assistant');
+      scrollToSection('phase-5-rag');
     }
   };
 
@@ -59,7 +65,7 @@ function QuickActions() {
         // Simulate upload process
         console.log(`Uploading: ${fileName}`);
         alert(`Document "${fileName}" uploaded successfully!`);
-        navigate('/upload');
+        scrollToSection('phase-1-upload');
         
         // Here you would typically:
         // 1. Upload to your backend server

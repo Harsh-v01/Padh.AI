@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { FiFile, FiChevronRight } from 'react-icons/fi';
 import './RecentDocuments.css';
-import { useDocuments } from '../../context/DocumentsContext';
+import { useDocuments } from '../../context/useDocuments';
 
 const RecentDocuments = () => {
   const [showAll, setShowAll] = useState(false);
