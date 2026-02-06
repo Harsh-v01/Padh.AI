@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import './QuickActions.css';
 import {
   FiUpload,

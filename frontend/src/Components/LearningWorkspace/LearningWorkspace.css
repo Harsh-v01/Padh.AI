@@ -18,6 +18,11 @@
 
 .workspace-header h2 {
   font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.workspace-header h2 {
+  font-size: 1.8rem;
   margin-bottom: 0.35rem;
 }
 
@@ -107,11 +112,6 @@
 
 .workspace-card button:hover {
   background: #1d4ed8;
-}
-
-.workspace-card button:disabled {
-  background: #cbd5f5;
-  cursor: not-allowed;
 }
 
 .workspace-meta {
