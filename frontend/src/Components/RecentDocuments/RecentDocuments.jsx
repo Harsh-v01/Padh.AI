@@ -1,43 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { FiFile, FiChevronRight } from 'react-icons/fi';
 import './RecentDocuments.css';
+import { useDocuments } from '../../context/useDocuments';
 
 const RecentDocuments = () => {
-  const [documents, setDocuments] = useState([]);
   const [showAll, setShowAll] = useState(false);
-  const [allDocuments, setAllDocuments] = useState([]);
-
-  // Load all documents from localStorage on component mount
-  useEffect(() => {
-    const savedDocs = localStorage.getItem('recentDocuments');
-    if (savedDocs) {
-      const parsedDocs = JSON.parse(savedDocs);
-      setAllDocuments(parsedDocs);
-      // Show only first 3 by default
-      setDocuments(parsedDocs.slice(0, 3));
-    }
-  }, []);
-
-  // Function to add a new document
-  const addDocument = (fileName) => {
-    const newDoc = {
-      id: Date.now(),
-      name: fileName,
-      date: new Date().toISOString().split('T')[0]
-    };
-    
-    // Add new document at the beginning
-    const updatedDocs = [newDoc, ...allDocuments];
-    setAllDocuments(updatedDocs);
-    localStorage.setItem('recentDocuments', JSON.stringify(updatedDocs));
-    
-    // Update displayed documents based on current view
-    if (showAll) {
-      setDocuments(updatedDocs); // Show all
-    } else {
-      setDocuments(updatedDocs.slice(0, 3)); // Show only first 3
-    }
-  };
+  const { documents } = useDocuments();
 
   // Function to format date
   const formatDate = (dateStr) => {
@@ -60,29 +28,22 @@ const RecentDocuments = () => {
 
   // Toggle between showing 3 documents and all documents
   const toggleViewAll = () => {
-    if (showAll) {
-      // Switch back to showing only 3
-      setDocuments(allDocuments.slice(0, 3));
-      setShowAll(false);
-    } else {
-      // Show all documents
-      setDocuments(allDocuments);
-      setShowAll(true);
-    }
+    setShowAll((prev) => !prev);
   };
 
-  // Export the addDocument function so QuickActions can use it
-  useEffect(() => {
-    window.addRecentDocument = addDocument;
-  }, [allDocuments, showAll]);
-
   // Get documents to display
-  const displayDocs = showAll ? documents : [...documents];
+  const displayDocs = useMemo(() => {
+    if (showAll) {
+      return documents;
+    }
+    return documents.slice(0, 3);
+  }, [documents, showAll]);
   
   // If not showing all and less than 3 documents, add empty slots
-  if (!showAll && displayDocs.length < 3) {
-    while (displayDocs.length < 3) {
-      displayDocs.push({ id: `empty-${displayDocs.length}`, empty: true });
+  const rows = [...displayDocs];
+  if (!showAll && rows.length < 3) {
+    while (rows.length < 3) {
+      rows.push({ id: `empty-${rows.length}`, empty: true });
     }
   }
 
@@ -97,8 +58,8 @@ const RecentDocuments = () => {
         <div className="recent-card">
           {/* Document List */}
           <div className="recent-list">
-            {displayDocs.length > 0 ? (
-              displayDocs.map((doc, index) => (
+            {rows.length > 0 ? (
+              rows.map((doc, index) => (
                 <div 
                   key={doc.id || index}
                   className={`recent-row ${doc.empty ? 'empty-row' : ''}`}
@@ -140,7 +101,7 @@ const RecentDocuments = () => {
           </div>
 
           {/* Footer with View All button - Inside the card like Recommended section */}
-          {allDocuments.length > 0 && (
+          {documents.length > 0 && (
             <div className="recent-footer">
               <p className="recent-desc">
                 {showAll ? 'Showing all documents' : 'View all your uploaded documents'}

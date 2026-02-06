@@ -2,6 +2,7 @@ import React from 'react';
 import './MainLayout.css';
 import QuickActions from '../QuickActions/QuickActions';
 import RecentDocuments from '../RecentDocuments/RecentDocuments';
+import LearningWorkspace from '../LearningWorkspace/LearningWorkspace';
 
 function MainLayout() {
   return (
@@ -17,6 +18,7 @@ function MainLayout() {
           <RecentDocuments />
         </div>
       </div>
+      <LearningWorkspace />
     </div>
   );
 }
