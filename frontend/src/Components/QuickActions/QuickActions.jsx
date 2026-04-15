@@ -87,7 +87,8 @@ function QuickActions({ onNavigate }) {
             });
           }
 
-          // Plagiarism check before adding document (threshold 30%)
+          // Plagiarism check before adding document (threshold 50% via plagiarismcheck.org)
+          let plagiarismMessage = '';
           try {
             const checkRes = await fetch(`${API_BASE}/api/plagiarism-check`, {
               method: 'POST',
@@ -106,6 +107,7 @@ function QuickActions({ onNavigate }) {
               input.remove();
               return;
             }
+            plagiarismMessage = checkData?.message || '';
           } catch (err) {
             console.error('Plagiarism check error:', err);
             alert('Plagiarism check failed. Please try again.');
@@ -116,7 +118,7 @@ function QuickActions({ onNavigate }) {
           if (window.addRecentDocument) {
             window.addRecentDocument(fileName, fileType, formattedSize, content);
           }
-          alert('Low plagiarism. Document successfully uploaded.');
+          alert(plagiarismMessage || 'Low plagiarism. Document successfully uploaded.');
           console.log(`📄 Uploaded: ${fileName} (${formattedSize})${IMAGE_EXTENSIONS.has(fileType) ? ' [OCR]' : ''}`);
         }
         input.remove();

@@ -12,7 +12,7 @@ AI-powered learning platform for students. Upload documents, get summaries, take
    - Create a virtual env (optional): `python -m venv .venv` then activate it
    - Install: `pip install -r requirements.txt`
    - **Tesseract OCR:** Install [Tesseract](https://github.com/tesseract-ocr/tesseract) on your system (required for image/scanned-doc uploads). On Windows, optionally set `TESSERACT_CMD` in `.env` to the path of `tesseract.exe` (e.g. `C:\Program Files\Tesseract-OCR\tesseract.exe`).
-   - Copy `.env.example` to `.env` and set `GROQ_API_KEY=your_groq_api_key`
+   - Copy `backend/.env.example` to `backend/.env` and set `GROQ_API_KEY` and `PLAG_CHECK` (token from [PlagiarismCheck.org](https://www.plagiarismcheck.org/for-developers/))
    - Run: `uvicorn main:app --reload` (API at `http://localhost:8000`)
 3. **Frontend**
    - `cd frontend`
@@ -62,7 +62,7 @@ Without Tesseract (or with permission issues), image uploads will show an error 
 
 ## Features
 
-- **Document upload** – Add PDFs, docs, images, text; list in Recent Documents. **OCR** extracts text from images and scanned docs (Tesseract). **Plagiarism check** (Groq, 30% threshold) runs at upload: low plagiarism → document added; high → not uploaded.
+- **Document upload** – Add PDFs, docs, images, text; list in Recent Documents. **OCR** extracts text from images and scanned docs (Tesseract). **Plagiarism check** ([PlagiarismCheck.org API](https://plagiarismcheck.org/api/v1/text), 50% threshold) runs at upload: under 50% → document added; 50% or higher → not uploaded.
 - **Document summary** – AI summary (Summary + Key Points) via backend
 - **Quiz mode** – 5 MCQs from topic or uploaded doc; 80%+ unlocks Tic Tac Toe
 - **Assistant** – Short, on-point answers via backend chat
