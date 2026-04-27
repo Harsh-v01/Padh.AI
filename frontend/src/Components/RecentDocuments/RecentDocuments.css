@@ -1,7 +1,9 @@
-/* RecentDocuments.css */
+/* RecentDocuments.css - Complete Professional CSS */
+
 .recent-docs-wrapper {
   width: 100%;
   height: 100%;
+  padding-left: 10px !important; /* Added 10px space from left */
 }
 
 .recent-docs {
@@ -20,7 +22,7 @@
 .qa-title {
   font-size: 15px;
   font-weight: 500;
-  color: #707070;
+  color: #fefefe !important;
   margin: 0;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -29,18 +31,19 @@
 
 /* Card - Matching Recommended card styling */
 .recent-card {
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 16px !important;
   padding: 20px;
   transition: all 0.2s ease;
   display: flex;
   flex-direction: column;
+  backdrop-filter: blur(10px);
 }
 
 .recent-card:hover {
-  border-color: #3a3a3a;
-  background: #222222;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
 }
 
 /* Recent List Container */
@@ -63,12 +66,12 @@
 }
 
 .recent-list::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
 }
 
 .recent-list::-webkit-scrollbar-thumb:hover {
-  background: #3a3a3a;
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Rows */
@@ -77,8 +80,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  font-size: 14px;
-  color: #f0f0f0;
+  font-size: 14.5px;
+  color: #d1d1d1;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'Anybody', -apple-system, BlinkMacSystemFont, sans-serif;
   flex-shrink: 0;
@@ -86,7 +89,7 @@
 }
 
 .recent-row + .recent-row {
-  border-top: 1px solid #2a2a2a;
+  border-top: 0.5px solid rgba(255, 255, 255, 0.06) !important;
 }
 
 /* Empty row styling */
@@ -122,25 +125,34 @@
   flex: 1;
 }
 
+/* Icon wrapper - Warm color theme */
 .doc-icon-wrapper {
-  width: 32px;
-  height: 32px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  width: 30px !important;
+  height: 30px !important;
+  background: rgba(232, 184, 122, 0.1) !important;
+  border: 0.5px solid rgba(232, 184, 122, 0.2) !important;
+  border-radius: 8px !important;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Icon - Warm amber color */
 .doc-icon {
-  color: #B087FF;
-  font-size: 16px;
+  color: #e8b87a !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+}
+
+/* Empty row icon - more subtle */
+.empty-row .doc-icon-wrapper {
+  background: rgba(232, 184, 122, 0.03) !important;
+  border-color: rgba(232, 184, 122, 0.08) !important;
 }
 
 .empty-row .doc-icon {
-  color: #8a8a8a;
+  color: rgba(232, 184, 122, 0.3) !important;
 }
 
 .doc-details {
@@ -150,54 +162,59 @@
   flex: 1;
 }
 
+/* Text colors - #d1d1d1 */
 .doc-name {
   font-weight: 500;
-  color: #ffffff;
+  color: #d1d1d1 !important;
   letter-spacing: 0.3px;
   font-family: 'Anybody', -apple-system, BlinkMacSystemFont, sans-serif;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
+  font-size: 14.5px !important;
 }
 
 .empty-name {
-  color: #8a8a8a;
+  color: #d1d1d1 !important;
   font-style: italic;
   font-weight: 400;
+  font-size: 13.5px !important;
 }
 
 .doc-date {
-  font-size: 11px;
-  color: #8a8a8a;
+  font-size: 12.5px !important;
+  color: #d1d1d1 !important;
   font-weight: 400;
   letter-spacing: 0.2px;
+  opacity: 0.8;
 }
 
 .empty-date {
-  font-size: 10px;
-  color: #707070;
+  font-size: 12.5px !important;
+  color: #d1d1d1 !important;
   font-style: italic;
+  opacity: 0.6;
 }
 
 /* Row actions container */
 .doc-row-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
   margin-left: 8px;
 }
 
-/* Delete button */
+/* Delete button - subtle warm theme */
 .doc-remove-btn {
-  width: 24px;
-  height: 24px;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  color: #555555;
-  font-size: 14px;
+  width: 24px !important;
+  height: 24px !important;
+  border: none !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: rgba(232, 184, 122, 0.4) !important;
+  font-size: 12.5px !important;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -208,22 +225,23 @@
 }
 
 .doc-remove-btn:hover {
-  background: rgba(255, 80, 80, 0.15);
-  color: #ff6b6b;
+  background: rgba(255, 80, 80, 0.15) !important;
+  color: #ff6b6b !important;
 }
 
-/* Arrow - Using FiChevronRight icon */
+/* Arrow - Warm color */
 .doc-arrow {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 16px;
+  color: #e8b87a !important;
+  font-size: 14.5px !important;
+  font-weight: 300 !important;
   transition: all 0.2s ease;
   flex-shrink: 0;
-  font-family: 'Anybody', -apple-system, BlinkMacSystemFont, sans-serif;
+  opacity: 0.5;
 }
 
 .recent-row:not(.empty-row):hover .doc-arrow {
   transform: translateX(3px);
-  color: #B087FF;
+  opacity: 0.8;
 }
 
 /* No documents state */
@@ -233,7 +251,7 @@
   align-items: center;
   justify-content: center;
   padding: 40px 20px;
-  color: #8a8a8a;
+  color: #d1d1d1;
   font-style: italic;
   text-align: center;
   flex: 1;
@@ -245,64 +263,69 @@
 }
 
 .empty-icon .doc-icon {
-  color: #8a8a8a;
+  color: rgba(232, 184, 122, 0.3) !important;
 }
 
 .no-documents span {
-  font-size: 14px;
+  font-size: 14.5px;
   margin-bottom: 8px;
+  color: #d1d1d1 !important;
 }
 
 .no-docs-hint {
-  font-size: 12px;
-  color: #707070;
+  font-size: 12.5px !important;
+  color: #d1d1d1 !important;
   margin: 0;
   line-height: 1.4;
   max-width: 200px;
+  opacity: 0.7;
 }
 
-/* Footer with button - INSIDE the card like Recommended section */
+/* Footer with button */
 .recent-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid #2a2a2a;
+  border-top: 0.5px solid rgba(255, 255, 255, 0.08) !important;
   padding-top: 16px;
   margin-top: 0;
   min-height: 40px;
 }
 
+/* recent-desc - INCREASED BY 0.5px (back to 13px) */
 .recent-desc {
-  font-size: 12px;
-  color: #8a8a8a;
+  font-size: 13px !important;
+  color: #d1d1d1 !important;
   margin: 0;
   line-height: 1.4;
   flex: 1;
+  opacity: 0.8;
 }
 
 .footer-spacer {
-  width: 80px; /* Matches button width for alignment */
+  width: 80px;
 }
 
-/* View All Button - Updated to match purple theme */
+/* View All Button */
 .view-all-btn {
-  background: transparent;
-  border: 1px solid #B087FF;
-  border-radius: 6px;
-  padding: 8px 20px;
-  color: #B087FF;
-  font-size: 12px;
-  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 6px !important;
+  padding: 8px 20px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
   font-family: 'Anybody', sans-serif;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
   min-width: 90px;
   white-space: nowrap;
 }
 
 .view-all-btn:hover {
-  background: rgba(176, 135, 255, 0.1);
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(-1px) !important;
+  border-color: #e8b87a !important;
 }
 
 /* =========================================== */
@@ -311,6 +334,10 @@
 
 /* Desktop */
 @media (min-width: 1024px) {
+  .recent-docs-wrapper {
+    padding-left: 10px !important;
+  }
+  
   .qa-title {
     font-size: 15px;
   }
@@ -321,7 +348,7 @@
   
   .recent-row {
     padding: 12px 0;
-    font-size: 14px;
+    font-size: 14.5px;
     min-height: 56px;
   }
   
@@ -334,12 +361,20 @@
   }
   
   .recent-desc {
-    font-size: 12px;
+    font-size: 13px;
   }
   
   .view-all-btn {
     padding: 8px 20px;
-    font-size: 12px;
+    font-size: 12.5px;
+  }
+  
+  .doc-name {
+    font-size: 14.5px !important;
+  }
+  
+  .doc-date {
+    font-size: 12.5px !important;
   }
   
   .footer-spacer {
@@ -349,6 +384,10 @@
 
 /* Tablet */
 @media (min-width: 768px) and (max-width: 1023px) {
+  .recent-docs-wrapper {
+    padding-left: 10px !important;
+  }
+  
   .qa-header {
     margin-bottom: 16px;
   }
@@ -364,7 +403,7 @@
   
   .recent-row {
     padding: 10px 0;
-    font-size: 13px;
+    font-size: 13.5px;
     min-height: 52px;
   }
   
@@ -374,16 +413,24 @@
   }
   
   .doc-icon-wrapper {
-    width: 30px;
-    height: 30px;
+    width: 28px !important;
+    height: 28px !important;
   }
   
   .doc-icon {
-    font-size: 15px;
+    font-size: 14px !important;
+  }
+  
+  .doc-name {
+    font-size: 13.5px !important;
+  }
+  
+  .doc-date {
+    font-size: 11.5px !important;
   }
   
   .doc-arrow {
-    font-size: 14px;
+    font-size: 13.5px !important;
   }
   
   .recent-footer {
@@ -391,12 +438,12 @@
   }
   
   .recent-desc {
-    font-size: 11px;
+    font-size: 12px;
   }
   
   .view-all-btn {
     padding: 7px 18px;
-    font-size: 11px;
+    font-size: 11.5px;
     min-width: 85px;
   }
   
@@ -409,16 +456,20 @@
   }
   
   .no-documents span {
-    font-size: 13px;
+    font-size: 13.5px;
   }
   
   .no-docs-hint {
-    font-size: 11px;
+    font-size: 11.5px;
   }
 }
 
 /* Mobile */
 @media (max-width: 767px) {
+  .recent-docs-wrapper {
+    padding-left: 10px !important;
+  }
+  
   .qa-header {
     margin-bottom: 16px;
   }
@@ -434,7 +485,7 @@
   
   .recent-row {
     padding: 12px 0;
-    font-size: 13px;
+    font-size: 13.5px;
     min-height: 48px;
   }
   
@@ -444,16 +495,24 @@
   }
   
   .doc-icon-wrapper {
-    width: 28px;
-    height: 28px;
+    width: 26px !important;
+    height: 26px !important;
   }
   
   .doc-icon {
-    font-size: 14px;
+    font-size: 13px !important;
+  }
+  
+  .doc-name {
+    font-size: 13.5px !important;
+  }
+  
+  .doc-date {
+    font-size: 11.5px !important;
   }
   
   .doc-arrow {
-    font-size: 14px;
+    font-size: 13.5px !important;
   }
   
   .recent-footer {
@@ -464,12 +523,12 @@
   }
   
   .recent-desc {
-    font-size: 11px;
+    font-size: 12px;
   }
   
   .view-all-btn {
     padding: 7px 16px;
-    font-size: 11px;
+    font-size: 11.5px;
     min-width: 80px;
     margin-left: auto;
   }
@@ -483,17 +542,21 @@
   }
   
   .no-documents span {
-    font-size: 13px;
+    font-size: 13.5px;
   }
   
   .no-docs-hint {
-    font-size: 11px;
+    font-size: 11.5px;
     max-width: 180px;
   }
 }
 
 /* Small Mobile */
 @media (max-width: 480px) {
+  .recent-docs-wrapper {
+    padding-left: 8px !important; /* Slightly smaller on mobile */
+  }
+  
   .qa-header {
     margin-bottom: 10px;
   }
@@ -508,7 +571,7 @@
   
   .recent-row {
     padding: 10px 0;
-    font-size: 12px;
+    font-size: 12.5px;
     min-height: 46px;
   }
   
@@ -518,20 +581,24 @@
   }
   
   .doc-icon-wrapper {
-    width: 26px;
-    height: 26px;
+    width: 24px !important;
+    height: 24px !important;
   }
   
   .doc-icon {
-    font-size: 13px;
+    font-size: 12px !important;
+  }
+  
+  .doc-name {
+    font-size: 12.5px !important;
   }
   
   .doc-date {
-    font-size: 10px;
+    font-size: 10.5px !important;
   }
   
   .doc-arrow {
-    font-size: 13px;
+    font-size: 12.5px !important;
   }
   
   .recent-footer {
@@ -540,12 +607,12 @@
   }
   
   .recent-desc {
-    font-size: 10px;
+    font-size: 11.5px;
   }
   
   .view-all-btn {
     padding: 6px 14px;
-    font-size: 10px;
+    font-size: 10.5px;
     min-width: 70px;
   }
   
@@ -558,11 +625,11 @@
   }
   
   .no-documents span {
-    font-size: 12px;
+    font-size: 12.5px;
   }
   
   .no-docs-hint {
-    font-size: 10px;
+    font-size: 10.5px;
     max-width: 150px;
   }
 }

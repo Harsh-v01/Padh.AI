@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './QuizPage.css';
 import Header from '../Components/Header/Header';
 import Footer from '../Components/Footer/Footer';
-import { 
-  FiCheck, FiRotateCcw, FiArrowRight, 
+import {
+  FiCheck, FiRotateCcw, FiArrowRight,
   FiUpload, FiFile, FiChevronRight, FiStar,
   FiCpu, FiUsers
 } from 'react-icons/fi';
@@ -27,11 +27,12 @@ function QuizPage({ onBack }) {
   const [gameDifficulty, setGameDifficulty] = useState('easy');
   const [quizError, setQuizError] = useState('');
 
-  // New backend state
+  // Backend state
   const [quizId, setQuizId] = useState(null);
   const [difficultyLevel, setDifficultyLevel] = useState(1);
   const [quizStats, setQuizStats] = useState(null);
 
+  // Game state
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
   const [winner, setWinner] = useState(null);
@@ -41,23 +42,29 @@ function QuizPage({ onBack }) {
   const [playerOWins, setPlayerOWins] = useState(0);
   const [draws, setDraws] = useState(0);
 
+  // 10 demo questions instead of 5
   const dummyQuizQuestions = [
     { id: 1, question: "What is the capital of France?", options: ['London', 'Paris', 'Berlin', 'Madrid'], correct: 1 },
     { id: 2, question: "How many continents are there on Earth?", options: ['5', '6', '7', '8'], correct: 2 },
     { id: 3, question: "Which planet is known as the Red Planet?", options: ['Venus', 'Mars', 'Jupiter', 'Saturn'], correct: 1 },
     { id: 4, question: "What is the largest ocean on Earth?", options: ['Atlantic', 'Indian', 'Arctic', 'Pacific'], correct: 3 },
-    { id: 5, question: "How many hours are in a day?", options: ['12', '24', '36', '48'], correct: 1 }
+    { id: 5, question: "How many hours are in a day?", options: ['12', '24', '36', '48'], correct: 1 },
+    { id: 6, question: "Which gas do plants absorb from the atmosphere?", options: ['Oxygen', 'Nitrogen', 'Carbon Dioxide', 'Hydrogen'], correct: 2 },
+    { id: 7, question: "What is H2O commonly known as?", options: ['Salt', 'Water', 'Oxygen', 'Hydrogen'], correct: 1 },
+    { id: 8, question: "Which is the fastest land animal?", options: ['Lion', 'Horse', 'Cheetah', 'Tiger'], correct: 2 },
+    { id: 9, question: "How many days are there in a leap year?", options: ['365', '366', '364', '367'], correct: 1 },
+    { id: 10, question: "Which part of the plant conducts photosynthesis?", options: ['Root', 'Stem', 'Leaf', 'Flower'], correct: 2 }
   ];
 
   useEffect(() => {
     loadDocuments();
-    
+
     const handleDocumentsUpdated = (e) => {
       setUploadedDocuments(e.detail);
     };
 
     window.addEventListener('documentsUpdated', handleDocumentsUpdated);
-    
+
     return () => {
       window.removeEventListener('documentsUpdated', handleDocumentsUpdated);
     };
@@ -80,7 +87,8 @@ function QuizPage({ onBack }) {
     setQuizId(null);
     setDifficultyLevel(1);
     setQuizStats(null);
-    
+    setQuizError('');
+
     setTimeout(() => {
       setQuestions(dummyQuizQuestions);
       setIsGenerating(false);
@@ -88,13 +96,13 @@ function QuizPage({ onBack }) {
       setSelectedAnswers({});
       setShowResults(false);
       setScore(0);
-    }, 1000);
+    }, 700);
   };
 
   const handleTopicSubmit = async (e) => {
     e.preventDefault();
     if (!topic.trim()) return;
-    
+
     setIsGenerating(true);
     setInputMode('topic');
     setSelectedDocument(null);
@@ -103,7 +111,7 @@ function QuizPage({ onBack }) {
     setQuizError('');
     setQuestions([]);
     setQuizStats(null);
-    
+
     try {
       const response = await fetch(`${BACKEND_URL}/generate`, {
         method: 'POST',
@@ -114,7 +122,7 @@ function QuizPage({ onBack }) {
       if (!response.ok) throw new Error('Backend error');
 
       const data = await response.json();
-      setQuestions(data.questions);
+      setQuestions(data.questions || []);
       setQuizId(data.quiz_id);
       setDifficultyLevel(data.difficulty_level || 1);
       setCurrentQuestionIndex(0);
@@ -154,7 +162,7 @@ function QuizPage({ onBack }) {
       if (!response.ok) throw new Error('Backend error');
 
       const data = await response.json();
-      setQuestions(data.questions);
+      setQuestions(data.questions || []);
       setQuizId(data.quiz_id);
       setDifficultyLevel(data.difficulty_level || 1);
       setCurrentQuestionIndex(0);
@@ -200,8 +208,10 @@ function QuizPage({ onBack }) {
           correctCount++;
         }
       });
+
       setScore(correctCount);
       setShowResults(true);
+
       if (correctCount >= Math.ceil(questions.length * 0.8)) {
         setShowGame(true);
         resetGame();
@@ -250,10 +260,22 @@ function QuizPage({ onBack }) {
 
     try {
       let body = { difficulty_level: nextDifficulty };
+
       if (inputMode === 'topic') {
         body.topic = topic.trim();
       } else if (inputMode === 'document' && selectedDocument) {
         body.content = selectedDocument.content.substring(0, 8000);
+      } else if (inputMode === 'trial') {
+        // for demo mode, just restart demo questions
+        setQuestions(dummyQuizQuestions);
+        setCurrentQuestionIndex(0);
+        setSelectedAnswers({});
+        setShowResults(false);
+        setScore(0);
+        setShowGame(false);
+        setQuizStats(null);
+        setIsGenerating(false);
+        return;
       }
 
       const response = await fetch(`${BACKEND_URL}/generate-more`, {
@@ -265,7 +287,7 @@ function QuizPage({ onBack }) {
       if (!response.ok) throw new Error('Generate more failed');
 
       const data = await response.json();
-      setQuestions(data.questions);
+      setQuestions(data.questions || []);
       setQuizId(data.quiz_id);
       setDifficultyLevel(data.difficulty_level || nextDifficulty);
       setCurrentQuestionIndex(0);
@@ -279,15 +301,6 @@ function QuizPage({ onBack }) {
     } finally {
       setIsGenerating(false);
     }
-  };
-
-  const handleResetQuiz = () => {
-    setCurrentQuestionIndex(0);
-    setSelectedAnswers({});
-    setShowResults(false);
-    setScore(0);
-    setShowGame(false);
-    setQuizStats(null);
   };
 
   const handleNewQuiz = () => {
@@ -304,6 +317,7 @@ function QuizPage({ onBack }) {
     setQuizId(null);
     setDifficultyLevel(1);
     setQuizStats(null);
+    setQuizError('');
   };
 
   // Tic Tac Toe game functions
@@ -313,18 +327,18 @@ function QuizPage({ onBack }) {
       [0, 3, 6], [1, 4, 7], [2, 5, 8],
       [0, 4, 8], [2, 4, 6]
     ];
-    
+
     for (let line of lines) {
       const [a, b, c] = line;
       if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
         return { winner: squares[a], line };
       }
     }
-    
+
     if (!squares.includes(null)) {
       return { winner: 'draw', line: [] };
     }
-    
+
     return { winner: null, line: [] };
   };
 
@@ -336,7 +350,7 @@ function QuizPage({ onBack }) {
 
     if (emptySquares.length === 0) return null;
 
-    switch(difficulty) {
+    switch (difficulty) {
       case 'easy':
         return emptySquares[Math.floor(Math.random() * emptySquares.length)];
       case 'medium':
@@ -382,34 +396,37 @@ function QuizPage({ onBack }) {
       if (!square) acc.push(index);
       return acc;
     }, []);
-    
+
     return emptySquares[Math.floor(Math.random() * emptySquares.length)];
   };
 
   const handleSquareClick = (index) => {
     if (board[index] || winner) return;
-    
+
     const newBoard = [...board];
     newBoard[index] = isXNext ? 'X' : 'O';
     setBoard(newBoard);
-    
+
     const { winner: gameWinner, line } = calculateWinner(newBoard);
-    
+
     if (gameWinner) {
       setWinner(gameWinner);
       setWinningLine(line || []);
-      
+
       if (gameWinner === 'X') setPlayerXWins(prev => prev + 1);
       else if (gameWinner === 'O') setPlayerOWins(prev => prev + 1);
       else if (gameWinner === 'draw') setDraws(prev => prev + 1);
-      
-      setGameHistory([...gameHistory, { 
-        winner: gameWinner, 
-        date: new Date().toLocaleTimeString(),
-      }]);
+
+      setGameHistory([
+        ...gameHistory,
+        {
+          winner: gameWinner,
+          date: new Date().toLocaleTimeString(),
+        }
+      ]);
     } else {
       setIsXNext(!isXNext);
-      
+
       if (gameMode === 'vsAI' && !isXNext && !gameWinner) {
         setTimeout(() => {
           const aiMove = getAIMove(newBoard, gameDifficulty);
@@ -417,17 +434,20 @@ function QuizPage({ onBack }) {
             const aiBoard = [...newBoard];
             aiBoard[aiMove] = 'O';
             setBoard(aiBoard);
-            
+
             const { winner: aiWinner, line: aiLine } = calculateWinner(aiBoard);
-            
+
             if (aiWinner) {
               setWinner(aiWinner);
               setWinningLine(aiLine || []);
               if (aiWinner === 'O') setPlayerOWins(prev => prev + 1);
-              setGameHistory([...gameHistory, { 
-                winner: aiWinner, 
-                date: new Date().toLocaleTimeString(),
-              }]);
+              setGameHistory([
+                ...gameHistory,
+                {
+                  winner: aiWinner,
+                  date: new Date().toLocaleTimeString(),
+                }
+              ]);
             } else {
               setIsXNext(true);
             }
@@ -455,9 +475,9 @@ function QuizPage({ onBack }) {
   const renderSquare = (index) => {
     const isWinning = winningLine.includes(index);
     return (
-      <button 
-        className={`game-square ${board[index] ? 'filled' : ''} 
-          ${board[index] === 'X' ? 'x-move' : ''} 
+      <button
+        className={`game-square ${board[index] ? 'filled' : ''}
+          ${board[index] === 'X' ? 'x-move' : ''}
           ${board[index] === 'O' ? 'o-move' : ''}
           ${isWinning ? 'winning-square' : ''}`}
         onClick={() => handleSquareClick(index)}
@@ -468,9 +488,12 @@ function QuizPage({ onBack }) {
     );
   };
 
-  const progress = questions.length > 0 
-    ? ((Object.keys(selectedAnswers).length / questions.length) * 100) 
+  const progress = questions.length > 0
+    ? ((Object.keys(selectedAnswers).length / questions.length) * 100)
     : 0;
+
+  const isQuizActive = questions.length > 0 && !showResults;
+  const showSetup = !isQuizActive && !showResults;
 
   return (
     <>
@@ -482,88 +505,93 @@ function QuizPage({ onBack }) {
             <h1 className="quiz-page-title">Quiz Mode</h1>
             <button className="quiz-back-button" onClick={onBack}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               Back to Dashboard
             </button>
           </div>
 
-          {/* Quiz Intro */}
-          <div className="quiz-intro">
-            <p className="quiz-intro-text">
-              Test your knowledge with interactive quizzes. Enter a topic for conceptual questions, or pick an uploaded document — quiz from docs uses RAG so questions match your material. Score 80% or higher to unlock Tic Tac Toe.
-            </p>
-          </div>
+          {/* Setup UI - only before quiz starts */}
+          {showSetup && (
+            <>
+              {/* Quiz Intro */}
+              <div className="quiz-intro">
+                <p className="quiz-intro-text">
+                  Test your knowledge with interactive quizzes. Enter a topic for conceptual questions, or pick an uploaded document — quiz from docs uses contextual document content. Score 80% or higher to unlock Tic Tac Toe.
+                </p>
+              </div>
 
-          {/* Action Buttons Row */}
-          <div className="quiz-action-row">
-            <button 
-              className="quiz-trial-btn"
-              onClick={handleTrialQuiz}
-              disabled={isGenerating}
-            >
-              Try Demo Quiz
-            </button>
-
-            <div className="quiz-input-group">
-              <form onSubmit={handleTopicSubmit} className="quiz-topic-form">
-                <input
-                  type="text"
-                  className="quiz-topic-input"
-                  placeholder="Enter topic..."
-                  value={topic}
-                  onChange={(e) => setTopic(e.target.value)}
+              {/* Action Buttons Row */}
+              <div className="quiz-action-row">
+                <button
+                  className="quiz-trial-btn"
+                  onClick={handleTrialQuiz}
                   disabled={isGenerating}
-                />
-                <button 
-                  type="submit" 
-                  className="quiz-generate-btn"
-                  disabled={!topic.trim() || isGenerating}
                 >
-                  {isGenerating ? '...' : 'Generate'}
+                  Try Demo Quiz
                 </button>
-              </form>
-              
-              <button 
-                className={`quiz-doc-btn ${showDocumentSelector ? 'active' : ''}`}
-                onClick={handleUploadClick}
-                disabled={isGenerating}
-              >
-                <FiUpload /> 
-                <span>Docs</span>
-              </button>
-            </div>
-          </div>
 
-          {/* Document Selector */}
-          {showDocumentSelector && (
-            <div className="quiz-document-selector">
-              <h3 className="quiz-document-title">Uploaded Documents</h3>
-              {uploadedDocuments.length > 0 ? (
-                <div className="quiz-document-list">
-                  {uploadedDocuments.map((doc) => (
-                    <div
-                      key={doc.id}
-                      className={`quiz-document-item ${selectedDocument?.id === doc.id ? 'selected' : ''}`}
-                      onClick={() => handleDocumentSelect(doc)}
+                <div className="quiz-input-group">
+                  <form onSubmit={handleTopicSubmit} className="quiz-topic-form">
+                    <input
+                      type="text"
+                      className="quiz-topic-input"
+                      placeholder="Enter topic..."
+                      value={topic}
+                      onChange={(e) => setTopic(e.target.value)}
+                      disabled={isGenerating}
+                    />
+                    <button
+                      type="submit"
+                      className="quiz-generate-btn"
+                      disabled={!topic.trim() || isGenerating}
                     >
-                      <div className="quiz-doc-icon">
-                        <FiFile />
-                      </div>
-                      <div className="quiz-doc-info">
-                        <span className="quiz-doc-name">{doc.name}</span>
-                        <span className="quiz-doc-meta">{doc.date}</span>
-                      </div>
-                      <FiChevronRight className="quiz-doc-arrow" />
-                    </div>
-                  ))}
+                      {isGenerating ? '...' : 'Generate'}
+                    </button>
+                  </form>
+
+                  <button
+                    className={`quiz-doc-btn ${showDocumentSelector ? 'active' : ''}`}
+                    onClick={handleUploadClick}
+                    disabled={isGenerating}
+                  >
+                    <FiUpload />
+                    <span>Docs</span>
+                  </button>
                 </div>
-              ) : (
-                <div className="quiz-doc-empty">
-                  <p>No documents uploaded.</p>
+              </div>
+
+              {/* Document Selector */}
+              {showDocumentSelector && (
+                <div className="quiz-document-selector">
+                  <h3 className="quiz-document-title">Uploaded Documents</h3>
+                  {uploadedDocuments.length > 0 ? (
+                    <div className="quiz-document-list">
+                      {uploadedDocuments.map((doc) => (
+                        <div
+                          key={doc.id}
+                          className={`quiz-document-item ${selectedDocument?.id === doc.id ? 'selected' : ''}`}
+                          onClick={() => handleDocumentSelect(doc)}
+                        >
+                          <div className="quiz-doc-icon">
+                            <FiFile />
+                          </div>
+                          <div className="quiz-doc-info">
+                            <span className="quiz-doc-name">{doc.name}</span>
+                            <span className="quiz-doc-meta">{doc.date}</span>
+                          </div>
+                          <FiChevronRight className="quiz-doc-arrow" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="quiz-doc-empty">
+                      <p>No documents uploaded.</p>
+                    </div>
+                  )}
                 </div>
               )}
-            </div>
+            </>
           )}
 
           {/* Error Display */}
@@ -574,8 +602,8 @@ function QuizPage({ onBack }) {
             </div>
           )}
 
-          {/* Quiz Content */}
-          {questions.length > 0 && !showResults && (
+          {/* Quiz Content - ONLY questions during active quiz */}
+          {isQuizActive && (
             <div className="quiz-content">
               <div className="quiz-source-indicator">
                 {inputMode === 'trial' && <span className="quiz-source-badge">Demo Quiz</span>}
@@ -626,16 +654,16 @@ function QuizPage({ onBack }) {
                 </div>
 
                 <div className="quiz-navigation">
-                  <button 
+                  <button
                     className="quiz-nav-btn"
                     onClick={handlePrevQuestion}
                     disabled={currentQuestionIndex === 0}
                   >
                     Previous
                   </button>
-                  
+
                   {currentQuestionIndex === questions.length - 1 ? (
-                    <button 
+                    <button
                       className="quiz-submit-btn"
                       onClick={handleSubmitQuiz}
                       disabled={Object.keys(selectedAnswers).length !== questions.length}
@@ -643,7 +671,7 @@ function QuizPage({ onBack }) {
                       Submit
                     </button>
                   ) : (
-                    <button 
+                    <button
                       className="quiz-nav-btn next"
                       onClick={handleNextQuestion}
                       disabled={currentQuestionIndex === questions.length - 1}
@@ -668,7 +696,7 @@ function QuizPage({ onBack }) {
                 <div className="quiz-score-percentage">
                   {Math.round((score / questions.length) * 100)}%
                 </div>
-                
+
                 {/* Backend stats: XP, Level, Badges */}
                 {quizStats && (
                   <div className="quiz-backend-stats" style={{ margin: '10px 0', fontSize: '0.9rem' }}>
@@ -702,15 +730,15 @@ function QuizPage({ onBack }) {
                     <div className="game-header">
                       <h3 className="game-title">Tic Tac Toe</h3>
                     </div>
-                    
+
                     <div className="game-mode-selector">
-                      <button 
+                      <button
                         className={`mode-btn ${gameMode === 'vsAI' ? 'active' : ''}`}
                         onClick={() => setGameMode('vsAI')}
                       >
                         <FiCpu /> vs AI
                       </button>
-                      <button 
+                      <button
                         className={`mode-btn ${gameMode === 'twoPlayer' ? 'active' : ''}`}
                         onClick={() => setGameMode('twoPlayer')}
                       >
@@ -720,19 +748,19 @@ function QuizPage({ onBack }) {
 
                     {gameMode === 'vsAI' && (
                       <div className="difficulty-selector">
-                        <button 
+                        <button
                           className={`difficulty-btn ${gameDifficulty === 'easy' ? 'active' : ''}`}
                           onClick={() => setGameDifficulty('easy')}
                         >
                           Easy
                         </button>
-                        <button 
+                        <button
                           className={`difficulty-btn ${gameDifficulty === 'medium' ? 'active' : ''}`}
                           onClick={() => setGameDifficulty('medium')}
                         >
                           Medium
                         </button>
-                        <button 
+                        <button
                           className={`difficulty-btn ${gameDifficulty === 'hard' ? 'active' : ''}`}
                           onClick={() => setGameDifficulty('hard')}
                         >
@@ -755,7 +783,7 @@ function QuizPage({ onBack }) {
                         <span className="stat-value">{playerOWins}</span>
                       </div>
                     </div>
-                    
+
                     <div className="game-board">
                       <div className="game-status">
                         {winner ? (
@@ -772,11 +800,11 @@ function QuizPage({ onBack }) {
                           </span>
                         )}
                       </div>
-                      
+
                       <div className="game-grid">
                         {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => renderSquare(index))}
                       </div>
-                      
+
                       <div className="game-controls">
                         <button className="game-reset-btn" onClick={resetGame}>
                           <FiRotateCcw /> New Game
@@ -789,22 +817,28 @@ function QuizPage({ onBack }) {
                   </div>
                 )}
 
+                {/* Results Actions - ONLY 2 buttons */}
                 <div className="quiz-results-actions">
-                  <button className="quiz-results-btn reset" onClick={handleResetQuiz}>
-                    <FiRotateCcw /> Try Again
+                  <button className="quiz-results-btn reset" onClick={onBack}>
+                    Back to Dashboard
                   </button>
-                  <button className="quiz-results-btn new" onClick={handleNewQuiz}>
-                    New Quiz
+
+                  <button
+                    className="quiz-results-btn new"
+                    onClick={handleGenerateMore}
+                    disabled={isGenerating}
+                  >
+                    {isGenerating
+                      ? 'Loading...'
+                      : inputMode === 'trial'
+                        ? 'Generate More'
+                        : `Generate More (Level ${Math.min(difficultyLevel + 1, 3)})`}
                   </button>
-                  {inputMode !== 'trial' && (
-                    <button 
-                      className="quiz-results-btn new" 
-                      onClick={handleGenerateMore}
-                      disabled={isGenerating}
-                    >
-                      {isGenerating ? 'Loading...' : `Generate More (Level ${Math.min(difficultyLevel + 1, 3)})`}
-                    </button>
-                  )}
+                </div>
+
+                {/* Optional: if you want a hidden reset route for internal use only */}
+                <div style={{ display: 'none' }}>
+                  <button onClick={handleNewQuiz}>Hidden Reset</button>
                 </div>
               </div>
             </div>
