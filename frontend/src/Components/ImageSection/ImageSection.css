@@ -1,152 +1,12 @@
-.image-section {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 40px 20px 80px; /* Top padding reduced, bottom stays */
-  box-sizing: border-box;
-  background: transparent;
-}
-
-.image-grid {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 40px;
-  width: 100%;
-  max-width: 1200px;
-  flex-wrap: nowrap; /* keeps them in a row */
-}
-
-
-/* Card remains the same */
-.card {
-  position: relative;
-  width: 198px;
-  height: 256px;
-  border-radius: 24px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  flex-shrink: 0;
-  flex-grow: 0;
-}
-
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-}
-
-/* Image - Aligned to TOP */
-.card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top; /* ✅ This aligns image to the top */
-  display: block; /* Removes any extra space below image */
-}
-
-.overlay {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  padding: 18px;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.85),
-    rgba(0, 0, 0, 0.5),
-    transparent
-  );
-  color: white;
-  box-sizing: border-box;
-}
-
-.overlay h3 {
-  margin: 0 0 6px;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.overlay p {
-  margin: 0;
-  font-size: 12px;
-  opacity: 0.85;
-  line-height: 1.4;
-}
-
-/* ===== Responsive Scaling ===== */
-
-@media (max-width: 1024px) {
-  .image-grid {
-    gap: 30px;
-  }
-  
-  .card {
-    width: 178px;
-    height: 236px;
-  }
-}
-
-@media (max-width: 768px) {
-  .image-grid {
-    gap: 20px;
-    overflow-x: auto;
-    padding: 10px;
-    justify-content: flex-start;
-  }
-
-  .card {
-    width: 158px;
-    height: 216px;
-  }
-  
-  .image-grid::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .image-grid {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .image-grid {
-    gap: 15px;
-    padding: 15px;
-  }
-
-  .card {
-    width: 138px;
-    height: 196px;
-  }
-
-  .overlay h3 {
-    font-size: 13px;
-  }
-
-  .overlay p {
-    font-size: 11px;
-  }
-}
-
-@media (max-width: 360px) {
-  .card {
-    width: 118px;
-    height: 166px;
-  }
-  
-  .overlay {
-    padding: 12px;
-  }
-}
-
+/* ========================================
+   IMAGE SECTION - TEXT HIGHLIGHTED, IMAGES CLEAR (TEXT INCREASED)
+   ======================================== */
 
 .image-section {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 40px 20px 80px;
+  padding: 40px 10px 80px; /* Changed from 20px to 10px on left/right */
   box-sizing: border-box;
   background: transparent;
 }
@@ -162,7 +22,7 @@
   flex-wrap: nowrap;
 }
 
-/* Card remains the same */
+/* Card - No hover effects */
 .card {
   position: relative;
   width: 198px;
@@ -170,56 +30,96 @@
   border-radius: 24px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   flex-shrink: 0;
   flex-grow: 0;
+  background: #000;
+  transition: none;
 }
 
+/* Remove hover effects - image stays fixed */
 .card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  transform: none;
+  box-shadow: none;
 }
 
-/* Image - Aligned to TOP */
+/* Image - Full visibility, no opacity reduction */
 .card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: top;
   display: block;
+  opacity: 1;
+  transition: none;
 }
 
+/* Overlay - Dark background for text visibility */
 .overlay {
   position: absolute;
   bottom: 0;
+  left: 0;
+  right: 0;
   width: 100%;
-  padding: 18px;
+  padding: 24px 16px 18px;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.85),
-    rgba(0, 0, 0, 0.5),
-    transparent
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.5) 30%,
+    rgba(0, 0, 0, 0.2) 60%,
+    transparent 100%
   );
-  color: white;
+  color: #ffffff;
   box-sizing: border-box;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
+/* Text styles - INCREASED for better readability */
 .overlay h3 {
-  margin: 0 0 6px;
-  font-size: 15px;
+  margin: 0 0 8px;
+  font-size: 18px;
   font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.3px;
+  line-height: 1.3;
 }
 
 .overlay p {
   margin: 0;
-  font-size: 12px;
-  opacity: 0.85;
-  line-height: 1.4;
+  font-size: 14px;
+  opacity: 1;
+  line-height: 1.45;
+  color: #f0f0f0;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  font-weight: 400;
+}
+
+/* Lighter dark tint overlay - helps text pop without dimming image */
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 40%,
+    rgba(0, 0, 0, 0.15) 70%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+  pointer-events: none;
+  border-radius: 24px;
 }
 
 /* ===== Responsive Scaling ===== */
 
 @media (max-width: 1024px) {
+  .image-section {
+    padding: 40px 10px 60px; /* Left/right padding 10px */
+  }
+  
   .image-grid {
     gap: 30px;
   }
@@ -228,32 +128,54 @@
     width: 178px;
     height: 236px;
   }
+  
+  .overlay h3 {
+    font-size: 17px;
+  }
+  
+  .overlay p {
+    font-size: 13px;
+  }
 }
 
 /* Tablet - Stack vertically */
 @media (max-width: 768px) {
   .image-section {
-    padding: 40px 20px 60px;
+    padding: 40px 10px 60px; /* Left/right padding 10px */
   }
   
   .image-grid {
-    flex-direction: column; /* Stack vertically */
-    align-items: center; /* Center cards horizontally */
+    flex-direction: column;
+    align-items: center;
     gap: 30px;
     flex-wrap: wrap;
-    overflow-x: visible; /* Remove horizontal scroll */
+    overflow-x: visible;
   }
 
   .card {
-    width: 280px; /* Larger cards on tablet */
+    width: 280px;
     height: 360px;
+  }
+  
+  .overlay {
+    padding: 28px 20px 20px;
+  }
+  
+  .overlay h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  
+  .overlay p {
+    font-size: 15px;
+    line-height: 1.5;
   }
 }
 
 /* Mobile */
 @media (max-width: 480px) {
   .image-section {
-    padding: 30px 16px 40px;
+    padding: 30px 10px 40px; /* Left/right padding 10px */
   }
   
   .image-grid {
@@ -261,25 +183,31 @@
   }
 
   .card {
-    width: 100%; /* Full width on mobile */
-    max-width: 320px; /* But cap the maximum size */
-    height: auto; /* Auto height based on content */
-    aspect-ratio: 3/4; /* Maintain aspect ratio */
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    aspect-ratio: 3/4;
   }
 
+  .overlay {
+    padding: 22px 16px 16px;
+  }
+  
   .overlay h3 {
-    font-size: 16px; /* Slightly larger text for better readability */
+    font-size: 19px;
+    margin-bottom: 6px;
   }
 
   .overlay p {
-    font-size: 13px;
+    font-size: 14px;
+    line-height: 1.45;
   }
 }
 
 /* Small Mobile */
 @media (max-width: 360px) {
   .image-section {
-    padding: 25px 12px 35px;
+    padding: 25px 10px 35px; /* Left/right padding 10px */
   }
   
   .image-grid {
@@ -291,16 +219,14 @@
   }
   
   .overlay {
-    padding: 15px;
+    padding: 18px 12px 14px;
   }
   
   .overlay h3 {
-    font-size: 15px;
+    font-size: 18px;
   }
   
   .overlay p {
-    font-size: 12px;
+    font-size: 13px;
   }
 }
-
- 

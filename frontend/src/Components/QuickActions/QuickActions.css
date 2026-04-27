@@ -1,9 +1,15 @@
-/* QuickActions.css - Fixed mobile card cutoff and consistent font sizes */
+/* QuickActions.css - Complete Professional CSS (Cleaned & Optimized) */
+
+/* ========================================
+   GLOBAL & WRAPPER STYLES
+   ======================================== */
+
 .quick-actions-wrapper {
   width: 100%;
   background: transparent;
   position: relative;
   overflow: visible;
+  padding-left: 10px !important;
 }
 
 .quick-actions {
@@ -14,7 +20,7 @@
   overflow: visible;
 }
 
-/* Premium ambient background */
+/* Premium ambient glow - reduced opacity for less shine */
 .quick-actions::before {
   content: '';
   position: absolute;
@@ -22,8 +28,8 @@
   left: -10%;
   width: 120%;
   height: 140%;
-  background: radial-gradient(circle at 20% 30%, rgba(120, 90, 240, 0.08) 0%, transparent 60%),
-              radial-gradient(circle at 90% 70%, rgba(255, 200, 100, 0.06) 0%, transparent 60%);
+  background: radial-gradient(circle at 20% 30%, rgba(120, 90, 240, 0.04) 0%, transparent 60%),
+              radial-gradient(circle at 90% 70%, rgba(255, 200, 100, 0.02) 0%, transparent 60%);
   filter: blur(60px);
   pointer-events: none;
   z-index: 0;
@@ -36,7 +42,10 @@
   overflow: visible;
 }
 
-/* Section Header */
+/* ========================================
+   SECTION HEADER
+   ======================================== */
+
 .qa-header {
   display: flex;
   align-items: center;
@@ -60,26 +69,29 @@
 }
 
 .qa-title {
-  font-size: 15px; /* Base size - consistent */
+  font-size: 15px;
   font-weight: 500;
   margin: 0;
-  color: rgba(255, 255, 255, 0.5);
+  color: #efefef !important;
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
 
 .header-badge {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 30px;
   padding: 6px 14px;
-  font-size: 12px; /* Base size - consistent */
+  font-size: 12px;
   font-weight: 450;
-  color: rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  color: #efefef !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(5px);
 }
 
-/* Cards Grid */
+/* ========================================
+   CARDS GRID
+   ======================================== */
+
 .qa-cards {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -87,176 +99,201 @@
   width: 100%;
 }
 
-/* Card Design */
+/* ========================================
+   CARD DESIGN - REDUCED SHININESS, ORIGINAL COLORS (SIZE UNCHANGED)
+   ======================================== */
+
 .qa-card {
-  height: 136px;
-  border-radius: 20px;
-  padding: 24px;
+  height: 136px; /* KEPT SAME */
+  border-radius: 16px;
+  padding: 20px 24px;
   cursor: pointer;
   transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px;
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  background: rgba(18, 18, 18, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.5);
+  border: 0.5px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
-/* Card gradient border */
-.qa-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  padding: 1px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-  opacity: 0.5;
+/* Card 1 - Upload (Original Color) */
+.qa-card.upload {
+  background: #7ddba8 !important;
 }
 
-/* Card hover states */
+.qa-card.upload .card-icon-wrapper {
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
 .qa-card.upload:hover {
-  border-color: rgba(0, 200, 255, 0.2);
-  box-shadow: 0 20px 35px -12px rgba(0, 160, 255, 0.25);
-  transform: translateY(-3px);
-  background: rgba(22, 22, 25, 0.98);
+  background: #89e8b8 !important;
+}
+
+/* Card 2 - Summary (Original Color) */
+.qa-card.summary {
+  background: #e877d3 !important;
+}
+
+.qa-card.summary .card-icon-wrapper {
+  background: rgba(0, 0, 0, 0.08) !important;
 }
 
 .qa-card.summary:hover {
-  border-color: rgba(0, 230, 150, 0.2);
-  box-shadow: 0 20px 35px -12px rgba(0, 230, 150, 0.25);
-  transform: translateY(-3px);
-  background: rgba(22, 25, 22, 0.98);
+  background: #f187de !important;
+}
+
+/* Card 3 - Quiz (Original Color) */
+.qa-card.quiz {
+  background: #e8e767 !important;
+}
+
+.qa-card.quiz .card-icon-wrapper {
+  background: rgba(0, 0, 0, 0.08) !important;
 }
 
 .qa-card.quiz:hover {
-  border-color: rgba(255, 180, 40, 0.2);
-  box-shadow: 0 20px 35px -12px rgba(255, 180, 40, 0.25);
-  transform: translateY(-3px);
-  background: rgba(25, 22, 18, 0.98);
+  background: #f0ef77 !important;
+}
+
+/* Card 4 - Assistant (Original Color) */
+.qa-card.assistant {
+  background: #f18455 !important;
+}
+
+.qa-card.assistant .card-icon-wrapper {
+  background: rgba(0, 0, 0, 0.08) !important;
 }
 
 .qa-card.assistant:hover {
-  border-color: rgba(160, 120, 255, 0.2);
-  box-shadow: 0 20px 35px -12px rgba(160, 120, 255, 0.25);
-  transform: translateY(-3px);
-  background: rgba(22, 18, 25, 0.98);
+  background: #f29365 !important;
 }
 
-/* Card Top */
+/* Remove any glossy overlay */
+.qa-card::before,
+.qa-card::after {
+  display: none !important;
+}
+
+/* Remove the old card-top structure from layout */
 .card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
+  display: contents !important;
 }
 
+/* Card Icon - LEFT (Flat, no shine) - SIZE UNCHANGED */
 .card-icon-wrapper {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 14px !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  transition: all 0.25s ease;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  order: 1 !important;
+  box-shadow: none !important;
+  border: 0.5px solid rgba(0, 0, 0, 0.06) !important;
 }
 
 .qa-icon {
-  font-size: 22px; /* Slightly larger for better visibility */
+  font-size: 30px !important;
+  color: #ffffff;
   transition: all 0.3s ease;
+  opacity: 0.9;
 }
 
-/* Icon colors */
-.qa-card.upload .qa-icon { color: #4D9FFF; }
-.qa-card.summary .qa-icon { color: #2CD4A5; }
-.qa-card.quiz .qa-icon { color: #FFB347; }
-.qa-card.assistant .qa-icon { color: #B87CFF; }
-
-.qa-card:hover .qa-icon {
-  transform: scale(1.1);
-}
-
-/* Arrow */
-.card-arrow {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.2);
-  font-size: 18px;
-  transition: all 0.25s ease;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.01);
-  border: 1px solid rgba(255, 255, 255, 0.02);
-}
-
-.qa-card:hover .card-arrow {
-  color: rgba(255, 255, 255, 0.8);
-  transform: translateX(5px);
-  border-color: rgba(255, 255, 255, 0.05);
-  background: rgba(255, 255, 255, 0.02);
-}
-
-/* Card text */
+/* Card Text - MIDDLE (Text size increased only) */
 .card-text {
-  margin-top: 12px;
+  flex: 1 !important;
+  margin: 0 !important;
+  order: 2 !important;
 }
 
 .card-title {
-  font-size: 17px; /* Slightly larger for emphasis */
-  font-weight: 550;
-  margin: 0 0 6px 0;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.3;
+  color: #000000;
+  font-weight: 600;
+  font-size: 19px !important; /* Increased from 18px */
+  margin: 0 0 4px 0;
+  text-align: left;
 }
 
 .card-desc {
-  font-size: 12px; /* Consistent base size */
-  font-weight: 400;
+  color: #000000;
+  font-weight: 500;
+  opacity: 0.65;
+  font-size: 15px !important; /* Increased from 14px */
+  text-align: left;
   margin: 0;
-  color: rgba(255, 255, 255, 0.35);
-  line-height: 1.4;
 }
 
-.qa-card:hover .card-title {
-  color: #FFFFFF;
+/* ========================================
+   CARD ARROW - RIGHT (Flat, no shine) - SIZE UNCHANGED
+   ======================================== */
+
+.card-arrow {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border: 0.5px solid rgba(0, 0, 0, 0.06) !important;
+  color: rgba(0, 0, 0, 0.5) !important;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+  order: 3 !important;
+  cursor: pointer;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
 }
 
-.qa-card:hover .card-desc {
-  color: rgba(255, 255, 255, 0.55);
+/* Hover effects - Subtle, no shadow */
+.qa-card:hover {
+  transform: translateY(-2px);
+  box-shadow: none !important;
 }
 
-/* Recommended Section */
+/* Icon hover */
+.qa-card:hover .qa-icon {
+  transform: scale(1.05);
+  opacity: 1;
+}
+
+/* Arrow hover */
+.qa-card:hover .card-arrow {
+  transform: translateX(2px);
+  background: rgba(255, 255, 255, 0.45) !important;
+  color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* ========================================
+   RECOMMENDED SECTION - TEXT INCREASED, SIZES SAME
+   ======================================== */
+
 .recommended-section {
   margin-top: 36px;
 }
 
 .recommended-card {
-  background: rgba(16, 16, 20, 0.85);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
   padding: 28px;
   transition: all 0.3s ease;
-  position: relative;
-  box-shadow: 0 20px 35px -15px rgba(0, 0, 0, 0.6);
+  box-shadow: none !important;
+  backdrop-filter: blur(10px);
 }
 
 .recommended-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(160, 120, 255, 0.15);
-  box-shadow: 0 30px 45px -15px rgba(120, 80, 200, 0.35);
-  background: rgba(20, 18, 25, 0.9);
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+  box-shadow: none !important;
 }
 
 .recommended-content {
@@ -267,42 +304,41 @@
 }
 
 .recommended-icon {
-  width: 64px;
-  height: 64px;
-  background: linear-gradient(145deg, rgba(160, 120, 255, 0.08), rgba(100, 80, 200, 0.02));
-  border: 1px solid rgba(160, 120, 255, 0.15);
-  border-radius: 20px;
+  background: none;
+  border: none;
+  color: #FFD166;
+  font-size: 36px;
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #B087FF;
-  font-size: 30px;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 20px -10px rgba(160, 120, 255, 0.2);
 }
 
 .recommended-card:hover .recommended-icon {
   transform: scale(1.05);
-  border-color: rgba(160, 120, 255, 0.3);
-  box-shadow: 0 15px 30px -10px #B087FF;
+  color: #FFE28A;
 }
 
 .recommended-text {
   flex: 1;
 }
 
+/* Recommended Title - Text increased only */
 .recommended-title {
-  font-size: 20px; /* Consistent */
+  font-size: 22px; /* Increased from 20px */
   font-weight: 600;
-  margin: 0 0 6px 0;
-  color: #FFFFFF;
+  margin: 0 0 8px 0;
+  color: #ffffff;
   line-height: 1.2;
 }
 
+/* Recommended Tagline - Text increased only */
 .recommended-tagline {
-  font-size: 14px; /* Consistent */
-  font-weight: 400;
-  color: rgba(160, 120, 255, 0.9);
+  font-size: 16px; /* Increased from 14px */
+  font-weight: 500;
+  color: #FFD166;
   margin: 0;
   line-height: 1.4;
 }
@@ -311,54 +347,62 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid rgba(255, 255, 255, 0.03);
-  padding-top: 24px;
+  border-top: 0.5px solid rgba(255, 255, 255, 0.08);
+  padding-top: 20px;
 }
 
+/* Recommended Description - Text increased only */
 .recommended-desc {
-  font-size: 13px; /* Consistent */
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 15px; /* Increased from 13px */
+  color: rgba(255, 255, 255, 0.6);
   margin: 0;
   max-width: 260px;
   line-height: 1.5;
 }
 
 .recommended-card:hover .recommended-desc {
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.75);
 }
 
-/* Try Now Button */
+/* ========================================
+   TRY NOW BUTTON - Text increased
+   ======================================== */
+
 .try-now-btn {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(160, 120, 255, 0.2);
-  border-radius: 100px;
-  padding: 12px 28px;
-  color: #FFFFFF;
-  font-size: 13px; /* Consistent */
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  backdrop-filter: blur(5px);
-  box-shadow: 0 4px 12px -8px rgba(160, 120, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 0.5px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 6px !important;
+  padding: 10px 24px !important;
+  color: #ffffff !important;
+  font-size: 14px !important; /* Increased from 13px */
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .try-now-btn:hover {
-  border-color: rgba(160, 120, 255, 0.5);
-  background: rgba(160, 120, 255, 0.05);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px -10px #B087FF;
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 200, 100, 0.4) !important;
+  transform: translateY(-1px) !important;
+  color: #ffffff !important;
 }
 
-/* Stats mini */
+/* ========================================
+   STATS MINI
+   ======================================== */
+
 .stats-mini {
   margin-top: 22px;
   display: flex;
   align-items: center;
   gap: 32px;
-  padding: 14px 20px;
-  background: rgba(10, 10, 12, 0.6);
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.02);
+  border: 0.5px solid rgba(255, 255, 255, 0.05);
   border-radius: 100px;
 }
 
@@ -387,27 +431,34 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
+  0%, 100% { opacity: 0.5; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.2); }
 }
 
 .stat-label {
-  font-size: 12px; /* Consistent */
+  font-size: 12px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.45);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .stat-value {
-  font-size: 14px; /* Consistent */
+  font-size: 14px;
   font-weight: 550;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.85);
   margin-left: 4px;
 }
 
-/* Mobile Responsive - Fixed card cutoff and font sizes */
+/* ========================================
+   MOBILE RESPONSIVE
+   ======================================== */
+
 @media (max-width: 768px) {
+  .quick-actions-wrapper {
+    padding-left: 10px !important;
+  }
+  
   .qa-section .qa-header {
     margin-bottom: 14px;
     padding-top: 2px;
@@ -417,7 +468,6 @@
     margin-bottom: 18px;
   }
   
-  /* Keep font sizes consistent - no reduction */
   .qa-title {
     font-size: 15px;
   }
@@ -427,7 +477,6 @@
     padding: 5px 12px;
   }
   
-  /* Fixed scroll container */
   .qa-scroll-container {
     overflow-x: auto;
     overflow-y: visible;
@@ -443,7 +492,6 @@
     display: none;
   }
   
-  /* Fixed cards container */
   .qa-cards {
     display: flex;
     grid-template-columns: none;
@@ -453,46 +501,39 @@
     align-items: flex-start;
   }
   
-  /* Fixed card styles */
   .qa-card {
-    width: 220px;
-    height: 130px;
+    width: 260px;
+    height: auto;
     flex-shrink: 0;
-    padding: 22px;
-    margin: 0;
-    box-sizing: border-box;
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-  }
-  
-  /* Keep card text sizes consistent */
-  .card-title {
-    font-size: 17px; /* Same as desktop */
-  }
-  
-  .card-desc {
-    font-size: 12px; /* Same as desktop */
+    padding: 18px;
   }
   
   .card-icon-wrapper {
-    width: 44px;
-    height: 44px;
+    width: 50px !important;
+    height: 50px !important;
   }
   
   .qa-icon {
-    font-size: 22px; /* Same as desktop */
+    font-size: 24px !important;
   }
   
-  /* Card arrow size adjusted proportionally */
+  .card-title {
+    font-size: 18px !important;
+  }
+  
+  .card-desc {
+    font-size: 14px !important;
+  }
+  
   .card-arrow {
-    width: 32px;
-    height: 32px;
-    font-size: 16px;
+    width: 28px;
+    height: 28px;
+    font-size: 12px !important;
   }
   
-  /* Ensure hover effects don't cause cutoff */
-  .qa-card:hover {
-    transform: translateY(-2px) translateZ(0);
+  .try-now-btn {
+    padding: 8px 18px !important;
+    font-size: 13px !important;
   }
   
   .recommended-section {
@@ -500,80 +541,7 @@
   }
   
   .recommended-card {
-    padding: 24px;
-    margin-bottom: 2px;
-  }
-  
-  /* Keep recommended section font sizes consistent */
-  .recommended-title {
-    font-size: 20px; /* Same as desktop */
-  }
-  
-  .recommended-tagline {
-    font-size: 14px; /* Same as desktop */
-  }
-  
-  .recommended-desc {
-    max-width: 180px;
-    font-size: 13px; /* Same as desktop */
-  }
-  
-  .try-now-btn {
-    padding: 10px 24px;
-    font-size: 13px; /* Same as desktop */
-  }
-  
-  .recommended-icon {
-    width: 56px;
-    height: 56px;
-    font-size: 26px; /* Slightly smaller but proportional */
-  }
-  
-  /* Stats mini */
-  .stats-mini {
-    margin-top: 20px;
-    padding: 12px 18px;
-    gap: 24px;
-  }
-  
-  .stat-label {
-    font-size: 12px; /* Same as desktop */
-  }
-  
-  .stat-value {
-    font-size: 14px; /* Same as desktop */
-  }
-  
-  .stat-dot {
-    width: 8px; /* Same as desktop */
-    height: 8px;
-  }
-}
-
-/* Small mobile devices */
-@media (max-width: 480px) {
-  .qa-card {
-    width: 200px;
-    height: 125px;
     padding: 20px;
-  }
-  
-  /* Additional fix for very small screens */
-  .qa-scroll-container {
-    padding-top: 6px;
-  }
-  
-  /* Keep all font sizes exactly the same */
-  .card-title {
-    font-size: 17px;
-  }
-  
-  .card-desc {
-    font-size: 12px;
-  }
-  
-  .qa-title {
-    font-size: 15px;
   }
   
   .recommended-title {
@@ -581,38 +549,147 @@
   }
   
   .recommended-tagline {
+    font-size: 15px;
+  }
+  
+  .recommended-desc {
+    max-width: 180px;
+    font-size: 14px;
+  }
+  
+  .stats-mini {
+    margin-top: 20px;
+    padding: 10px 16px;
+    gap: 20px;
+  }
+  
+  .stat-label {
+    font-size: 11px;
+  }
+  
+  .stat-value {
+    font-size: 13px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .qa-card {
+    width: 240px;
+    padding: 16px;
+  }
+  
+  .card-icon-wrapper {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  
+  .qa-icon {
+    font-size: 22px !important;
+  }
+  
+  .card-title {
+    font-size: 17px !important;
+  }
+  
+  .card-desc {
+    font-size: 13px !important;
+  }
+  
+  .stats-mini {
+    gap: 14px;
+  }
+  
+  .recommended-title {
+    font-size: 18px;
+  }
+  
+  .recommended-tagline {
     font-size: 14px;
   }
   
   .recommended-desc {
     font-size: 13px;
   }
+}
+
+/* ========================================
+   PRINT STYLES - FORCED BLACK & WHITE FOR CLARITY
+   ======================================== */
+
+@media print {
+  .quick-actions-wrapper {
+    padding-left: 0 !important;
+  }
   
+  .quick-actions::before,
+  .quick-actions::after {
+    display: none !important;
+  }
+  
+  .qa-card,
+  .recommended-card {
+    background: #ffffff !important;
+    border: 1px solid #cccccc !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  .qa-title,
+  .header-badge,
+  .card-title,
+  .card-desc,
+  .recommended-title,
+  .recommended-tagline,
+  .recommended-desc,
+  .stat-label,
+  .stat-value,
   .try-now-btn {
-    font-size: 13px;
-    padding: 9px 22px;
+    color: #000000 !important;
+  }
+  
+  .qa-icon,
+  .recommended-icon {
+    color: #333333 !important;
+  }
+  
+  .card-arrow {
+    background: #f0f0f0 !important;
+    color: #000000 !important;
+    border: 1px solid #cccccc !important;
+    box-shadow: none !important;
+  }
+  
+  .qa-card:hover,
+  .recommended-card:hover,
+  .try-now-btn:hover {
+    transform: none !important;
+    background: #ffffff !important;
+  }
+  
+  .qa-card,
+  .recommended-card,
+  .stats-mini {
+    border: 1px solid #000000 !important;
   }
   
   .stats-mini {
-    gap: 18px;
-    padding: 10px 16px;
+    background: #ffffff !important;
+    backdrop-filter: none !important;
   }
   
-  .stat-label {
-    font-size: 12px;
-  }
-  
-  .stat-value {
-    font-size: 14px;
+  .qa-cards {
+    gap: 12px;
   }
   
   .stat-dot {
-    width: 8px;
-    height: 8px;
+    background: #000000 !important;
+    animation: none !important;
   }
 }
 
-/* Ensure parent containers don't clip */
+/* Prevent clipping */
 .qa-section, 
 .recommended-section,
 .qa-container,
