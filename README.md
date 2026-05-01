@@ -59,70 +59,6 @@ Padh.AI follows a modular pipeline:
 
 This architecture makes the platform scalable and modular.
 
----
-
-## 🔄 RAG Pipeline
-
-Padh.AI follows a **Retrieval-Augmented Generation (RAG)** pipeline to ensure that all AI-generated outputs are grounded in the uploaded academic documents instead of relying only on generic model knowledge.
-
-This makes the system more relevant, context-aware, and useful for students.
-
-### Step-by-Step Flow
-
-1. **Document Upload**
-   - User uploads academic resources such as PDFs, lecture notes, handouts, or study material.
-
-2. **Text Extraction / OCR**
-   - The system extracts text from the uploaded file.
-   - If the document is scanned or image-based, OCR is used to convert it into readable text.
-
-3. **Preprocessing**
-   - Clean and normalize the extracted text.
-   - Remove noise, extra spaces, broken lines, and formatting issues.
-
-4. **Chunking**
-   - Split the document into smaller meaningful chunks.
-   - This improves retrieval quality and ensures the LLM gets only relevant context.
-
-5. **Embedding Generation**
-   - Convert each chunk into vector embeddings using an embedding model.
-   - These embeddings capture semantic meaning.
-
-6. **Vector Storage**
-   - Store embeddings in a vector database / vector index.
-   - Possible implementations: **FAISS**, **ChromaDB**, or **Supabase Vector** (future).
-
-7. **User Request / Query**
-   - The user selects an action such as:
-     - Generate Summary
-     - Generate PYQs
-     - Generate Quiz
-     - Ask a Conceptual Question
-
-8. **Similarity Retrieval**
-   - Retrieve the most relevant chunks from the vector store based on the user request.
-   - This ensures only the most useful document context is passed forward.
-
-9. **Prompt Construction**
-   - Build a structured prompt containing:
-     - Task instruction
-     - Retrieved context
-     - Formatting constraints
-     - Academic output style
-
-10. **LLM Generation**
-    - Send the retrieved context + prompt to the LLM.
-    - Generate context-aware outputs such as:
-      - Summaries
-      - Conceptual explanations
-      - PYQ-style questions
-      - MCQ quizzes
-
-11. **Output Delivery**
-    - Display the generated result to the user in the frontend.
-    - Optionally store metadata for analytics or future personalization.
-
----
 
 ## 🧠 Simple Flow Representation
 
@@ -152,7 +88,7 @@ Frontend Output
 
 ---
 
-## 🛠️ Suggested Tools / Technologies
+## 🛠️Tools / Technologies
 
 This project can be implemented using the following technologies:
 
@@ -184,45 +120,6 @@ This project can be implemented using the following technologies:
 - **Supabase** – for user authentication, storing progress, and dashboard data
 - **PostgreSQL** – for storing metadata and analytics
 
----
-
-## 📁 Suggested Project Structure
-
-```bash
-Padh.AI/
-│
-├── frontend/
-│   ├── src/
-│   │   ├── pages/
-│   │   ├── components/
-│   │   ├── services/
-│   │   └── utils/
-│   └── package.json
-│
-├── backend/
-│   ├── main.py
-│   ├── routes/
-│   │   ├── upload.py
-│   │   ├── summary.py
-│   │   ├── pyq.py
-│   │   ├── quiz.py
-│   │   └── qa.py
-│   │
-│   ├── services/
-│   │   ├── extractor.py
-│   │   ├── chunker.py
-│   │   ├── embedder.py
-│   │   ├── retriever.py
-│   │   └── llm_service.py
-│   │
-│   ├── vectorstore/
-│   │   └── ...
-│   │
-│   └── requirements.txt
-│
-└── README.md
-```
----
 
 ## ▶️ How to Run the Project
 
@@ -253,36 +150,6 @@ Frontend will run on:
 ```bash
 http://localhost:5173
 ```
----
-
-## 📊 Future Enhancements
-
-- User login and authentication
-- Personalized dashboard
-- Quiz history tracking
-- Weak-topic analysis
-- Adaptive quiz difficulty
-- Flashcard generation
-- Spaced repetition learning
-- Leaderboards and gamification
-- Supabase integration for real data storage
-- Multi-document support
-- Citation-based answers from uploaded documents
-
----
-
-## 🎓 Academic Importance
-
-Padh.AI is designed as an AI-assisted academic learning platform that combines:
-
-- Document understanding
-- Information retrieval
-- Large language models
-- Automated question generation
-- Personalized learning support
-
-This project shows how **RAG (Retrieval-Augmented Generation)** can be used in education to make AI outputs more relevant and more useful than general-purpose chatbot responses.
-
 ---
 
 ## 🏁 Conclusion
