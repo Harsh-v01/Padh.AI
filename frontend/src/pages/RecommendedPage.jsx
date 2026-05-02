@@ -4,31 +4,27 @@ import "./RecommendedPage.css";
 const API = "http://localhost:8000/api";
 
 export default function App() {
-  // Logic State
+  // State
   const [topic, setTopic] = useState("");
-  const [newQuestions, setNewQuestions] = useState([]);
+  const [questions, setQuestions] = useState([]);
   const [index, setIndex] = useState(0);
   const [answer, setAnswer] = useState("");
-  const [evaluationResult, setEvaluationResult] = useState(null);
+  const [evaluation, setEvaluation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [evaluating, setEvaluating] = useState(false);
-  const [activeMode, setActiveMode] = useState("topic");
+  const [mode, setMode] = useState("topic");
   const [answers, setAnswers] = useState([]);
   const [results, setResults] = useState([]);
   const [maxReached, setMaxReached] = useState(0);
   const [allQuestions, setAllQuestions] = useState([]);
   const [showQuiz, setShowQuiz] = useState(false);
-  
-  // New Document & Level Logic State
   const [documents, setDocuments] = useState([]);
   const [selectedDoc, setSelectedDoc] = useState(null);
-  const [difficultyLevel, setDifficultyLevel] = useState(1);
-  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [difficulty, setDifficulty] = useState(1);
+  const [showModal, setShowModal] = useState(false);
   const fileInputRef = useRef(null);
 
-  // -------------------------------
-  // FETCH DOCUMENTS
-  // -------------------------------
+  // Fetch documents
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -48,10 +44,8 @@ export default function App() {
     return () => window.removeEventListener("documentsUpdated", fetchDocuments);
   }, []);
 
-  // -------------------------------
-  // FILE UPLOAD
-  // -------------------------------
-  const processFile = async (file) => {
+  // File upload
+  const uploadFile = async (file) => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
@@ -69,7 +63,7 @@ export default function App() {
 
       setSelectedDoc({ id: data.id, file_name: file.name });
       window.dispatchEvent(new Event("documentsUpdated"));
-      setShowUploadModal(false);
+      setShowModal(false);
     } catch (err) {
       alert("Upload failed: " + err.message);
     } finally {
@@ -79,18 +73,16 @@ export default function App() {
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
-    if (file) processFile(file);
+    if (file) uploadFile(file);
   };
 
-  // -------------------------------
-  // GENERATE QUESTIONS
-  // -------------------------------
-  const makeQuestions = async () => {
-    if (activeMode === "topic" && !topic.trim()) return;
-    if (activeMode === "pdf" && !selectedDoc) return;
+  // Generate questions
+  const generateQuestions = async () => {
+    if (mode === "topic" && !topic.trim()) return;
+    if (mode === "pdf" && !selectedDoc) return;
 
     setLoading(true);
-    setDifficultyLevel(1);
+    setDifficulty(1);
 
     try {
       const token = localStorage.getItem("token");
@@ -108,13 +100,13 @@ export default function App() {
       });
 
       const data = await res.json();
-      const questions = data?.questions || [];
+      const newQuestions = data?.questions || [];
 
-      setAllQuestions(questions);
-      setNewQuestions(questions);
+      setAllQuestions(newQuestions);
+      setQuestions(newQuestions);
       setIndex(0);
       setAnswer("");
-      setEvaluationResult(null);
+      setEvaluation(null);
       setAnswers([]);
       setResults([]);
       setMaxReached(0);
@@ -125,10 +117,11 @@ export default function App() {
     setLoading(false);
   };
 
-  const generateMoreQuestions = async () => {
-    if (difficultyLevel >= 3) return;
-    const nextLevel = difficultyLevel + 1;
-    setDifficultyLevel(nextLevel);
+  // Generate more questions
+  const generateMore = async () => {
+    if (difficulty >= 3) return;
+    const nextLevel = difficulty + 1;
+    setDifficulty(nextLevel);
     setLoading(true);
 
     try {
@@ -151,17 +144,15 @@ export default function App() {
       const more = data?.questions || [];
       const updated = [...allQuestions, ...more];
       setAllQuestions(updated);
-      setNewQuestions(updated);
+      setQuestions(updated);
     } catch (e) {
       console.error(e);
     }
     setLoading(false);
   };
 
-  // -------------------------------
-  // EVALUATE & NAV
-  // -------------------------------
-  const submit = async () => {
+  // Submit answer
+  const submitAnswer = async () => {
     setEvaluating(true);
     try {
       const token = localStorage.getItem("token");
@@ -172,19 +163,22 @@ export default function App() {
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-          question: newQuestions[index],
+          question: questions[index],
           answer
         })
       });
 
       const data = await res.json();
-      setEvaluationResult(data);
+      setEvaluation(data);
+      
       const updatedAnswers = [...answers];
       updatedAnswers[index] = answer;
       setAnswers(updatedAnswers);
+      
       const updatedResults = [...results];
       updatedResults[index] = data;
       setResults(updatedResults);
+      
       if (index + 1 > maxReached) setMaxReached(index + 1);
     } catch (e) {
       console.error(e);
@@ -192,16 +186,17 @@ export default function App() {
     setEvaluating(false);
   };
 
-  const next = () => {
+  // Navigation
+  const nextQuestion = () => {
     const nextIndex = index + 1;
     setIndex(nextIndex);
     setAnswer(answers[nextIndex] || "");
-    setEvaluationResult(results[nextIndex] || null);
+    setEvaluation(results[nextIndex] || null);
   };
 
-  const retry = () => {
+  const retryQuestion = () => {
     setAnswer("");
-    setEvaluationResult(null);
+    setEvaluation(null);
     const updatedResults = [...results];
     updatedResults[index] = null;
     setResults(updatedResults);
@@ -209,32 +204,29 @@ export default function App() {
 
   const resetQuiz = () => {
     setShowQuiz(false);
-    setNewQuestions([]);
+    setQuestions([]);
     setAllQuestions([]);
     setIndex(0);
     setAnswer("");
-    setEvaluationResult(null);
+    setEvaluation(null);
     setAnswers([]);
     setResults([]);
     setMaxReached(0);
     setTopic("");
     setSelectedDoc(null);
-    setDifficultyLevel(1);
+    setDifficulty(1);
   };
 
   const goToQuestion = (i) => {
     setIndex(i);
     setAnswer(answers[i] || "");
-    setEvaluationResult(results[i] || null);
+    setEvaluation(results[i] || null);
   };
 
   const completedCount = answers.filter(a => a && a.trim()).length;
-  const progress = newQuestions.length ? (completedCount / newQuestions.length) * 100 : 0;
+  const progress = questions.length ? (completedCount / questions.length) * 100 : 0;
 
-  // -------------------------------
-  // UI RENDERING
-  // -------------------------------
-
+  // Landing Page
   if (!showQuiz) {
     return (
       <div className="rec-app">
@@ -248,21 +240,21 @@ export default function App() {
 
           <div className="rec-mode-toggle">
             <button 
-              className={`rec-mode-toggle-btn ${activeMode === 'topic' ? 'active' : ''}`}
-              onClick={() => setActiveMode('topic')}
+              className={`rec-mode-toggle-btn ${mode === 'topic' ? 'active' : ''}`}
+              onClick={() => setMode('topic')}
             >
               Topic Search
             </button>
             <button 
-              className={`rec-mode-toggle-btn ${activeMode === 'pdf' ? 'active' : ''}`}
-              onClick={() => setActiveMode('pdf')}
+              className={`rec-mode-toggle-btn ${mode === 'pdf' ? 'active' : ''}`}
+              onClick={() => setMode('pdf')}
             >
               Upload Document
             </button>
           </div>
 
           <div className="rec-input-area">
-            {activeMode === 'topic' ? (
+            {mode === 'topic' ? (
               <div className="rec-search-box">
                 <i className="fa-solid fa-magnifying-glass"></i>
                 <input
@@ -270,21 +262,21 @@ export default function App() {
                   placeholder="e.g., Artificial Intelligence, React.js..."
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && makeQuestions()}
+                  onKeyPress={(e) => e.key === 'Enter' && generateQuestions()}
                 />
-                <button onClick={makeQuestions} disabled={loading || !topic.trim()}>
+                <button onClick={generateQuestions} disabled={loading || !topic.trim()}>
                   {loading ? 'Generating...' : 'Generate →'}
                 </button>
               </div>
             ) : (
               <div className="rec-pdf-area">
-                <div className="rec-upload-area" onClick={() => setShowUploadModal(true)}>
+                <div className="rec-upload-area" onClick={() => setShowModal(true)}>
                   <div className="rec-upload-content">
                     <i className="fa-solid fa-file-pdf"></i>
                     <span>{selectedDoc ? selectedDoc.file_name : 'Click to choose or upload document'}</span>
                   </div>
                 </div>
-                <button onClick={makeQuestions} disabled={loading || !selectedDoc}>
+                <button onClick={generateQuestions} disabled={loading || !selectedDoc}>
                   {loading ? 'Processing...' : 'Generate →'}
                 </button>
               </div>
@@ -307,13 +299,13 @@ export default function App() {
           </div>
         </div>
 
-        {/* Upload/Selection Modal */}
-        {showUploadModal && (
-          <div className="rec-modal-overlay" onClick={() => setShowUploadModal(false)}>
+        {/* Modal */}
+        {showModal && (
+          <div className="rec-modal-overlay" onClick={() => setShowModal(false)}>
             <div className="rec-modal-content" onClick={e => e.stopPropagation()}>
               <div className="rec-modal-header">
                 <h3>Select Document</h3>
-                <button className="rec-modal-close" onClick={() => setShowUploadModal(false)}>&times;</button>
+                <button className="rec-modal-close" onClick={() => setShowModal(false)}>&times;</button>
               </div>
               <div className="rec-document-list">
                 <label className="rec-modal-upload-btn">
@@ -324,7 +316,7 @@ export default function App() {
                   <div 
                     key={doc.id} 
                     className="rec-doc-item" 
-                    onClick={() => { setSelectedDoc(doc); setShowUploadModal(false); }}
+                    onClick={() => { setSelectedDoc(doc); setShowModal(false); }}
                   >
                     <i className="fa-solid fa-file-lines"></i>
                     <span>{doc.file_name}</span>
@@ -349,7 +341,7 @@ export default function App() {
           
           <div className="rec-question-nav-wrapper">
             <div className="rec-question-nav">
-              {newQuestions.map((_, i) => (
+              {questions.map((_, i) => (
                 <button
                   key={i}
                   className={`rec-q-dot ${index === i ? 'active' : ''} ${answers[i] ? 'done' : ''}`}
@@ -362,7 +354,7 @@ export default function App() {
           </div>
           
           <div className="rec-quiz-progress">
-            <div className="rec-progress-text">{completedCount} / {newQuestions.length} Completed</div>
+            <div className="rec-progress-text">{completedCount} / {questions.length} Completed</div>
             <div className="rec-progress-bar">
               <div className="rec-progress-fill" style={{ width: `${progress}%` }} />
             </div>
@@ -371,15 +363,15 @@ export default function App() {
 
         <div className="rec-quiz-main">
           <div className="rec-question-card">
-            <div className="rec-question-badge">Question {index + 1} (Level {difficultyLevel})</div>
-            <h2 className="rec-question-text">{newQuestions[index]}</h2>
+            <div className="rec-question-badge">Question {index + 1} (Level {difficulty})</div>
+            <h2 className="rec-question-text">{questions[index]}</h2>
             
             <textarea
               className="rec-answer-input"
               value={answer}
               onChange={(e) => {
                 setAnswer(e.target.value);
-                setEvaluationResult(null);
+                setEvaluation(null);
               }}
               placeholder="Write your answer here..."
             />
@@ -391,54 +383,76 @@ export default function App() {
               </div>
             )}
 
-            {!evaluationResult && !evaluating ? (
-              <button className="rec-submit-btn" onClick={submit} disabled={!answer.trim()}>
+            {!evaluation && !evaluating ? (
+              <button className="rec-submit-btn" onClick={submitAnswer} disabled={!answer.trim()}>
                 Submit Answer <i className="fa-solid fa-paper-plane"></i>
               </button>
-            ) : evaluationResult && (
+            ) : evaluation && (
               <div className="rec-evaluation">
+                <h3 className="evaluation-heading">Evaluation Result</h3>
+                
                 <div className="rec-score-card">
-                   <div className="rec-score-circle">
+                  <div className="rec-score-circle">
                     <svg width="100" height="100" viewBox="0 0 100 100">
                       <circle cx="50" cy="50" r="45" fill="none" stroke="#2a2a2a" strokeWidth="4"/>
                       <circle 
                         cx="50" cy="50" r="45" fill="none" stroke="#10b981" strokeWidth="4"
                         strokeDasharray={`${2 * Math.PI * 45}`}
-                        strokeDashoffset={`${2 * Math.PI * 45 * (1 - (evaluationResult.percentage || 0) / 100)}`}
+                        strokeDashoffset={`${2 * Math.PI * 45 * (1 - (evaluation.percentage || 0) / 100)}`}
                         transform="rotate(-90 50 50)"
                         strokeLinecap="round"
                       />
                     </svg>
                     <div className="rec-score-text">
-                      <span className="rec-score-value">{evaluationResult.percentage || 0}</span>
+                      <span className="rec-score-value">{evaluation.percentage || 0}</span>
                       <span className="rec-score-unit">%</span>
                     </div>
                   </div>
-                  <div className="rec-score-badge">{evaluationResult.correctness}</div>
+                  <div className="rec-score-badge">{evaluation.correctness}</div>
                 </div>
 
                 <div className="rec-feedback-list">
-                  <div className="rec-feedback-item feedback">
+                  <div className="rec-feedback-item">
                     <i className="fa-solid fa-lightbulb"></i>
                     <div>
                       <strong>AI Feedback</strong>
-                      <p>{evaluationResult.feedback}</p>
+                      <p>{evaluation.feedback}</p>
                     </div>
                   </div>
+                  
+                  {evaluation.wrong && (
+                    <div className="rec-feedback-item">
+                      <i className="fa-solid fa-circle-exclamation"></i>
+                      <div>
+                        <strong>What's Missing / Incorrect</strong>
+                        <p>{evaluation.wrong}</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {evaluation.correct_answer && (
+                    <div className="rec-feedback-item">
+                      <i className="fa-solid fa-check-circle"></i>
+                      <div>
+                        <strong>Model Answer</strong>
+                        <p>{evaluation.correct_answer}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="rec-action-buttons">
-                  <button className="rec-btn-retry" onClick={retry}>
+                  <button className="rec-btn-retry" onClick={retryQuestion}>
                     <i className="fa-solid fa-rotate-left"></i> Try Again
                   </button>
-                  {index < newQuestions.length - 1 ? (
-                    <button className="rec-btn-next" onClick={next}>
+                  {index < questions.length - 1 ? (
+                    <button className="rec-btn-next" onClick={nextQuestion}>
                       Next Question <i className="fa-solid fa-arrow-right"></i>
                     </button>
                   ) : (
                     <div className="rec-finish-group">
-                      {difficultyLevel < 3 && (
-                        <button className="rec-btn-more" onClick={generateMoreQuestions} disabled={loading}>
+                      {difficulty < 3 && (
+                        <button className="rec-btn-more" onClick={generateMore} disabled={loading}>
                           <i className="fa-solid fa-arrow-up-right-dots"></i> 
                           {loading ? 'Leveling up...' : 'More (Next Level)'}
                         </button>
