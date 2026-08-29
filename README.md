@@ -120,38 +120,6 @@ This project can be implemented using the following technologies:
 - **Supabase** – for user authentication, storing progress, and dashboard data
 - **PostgreSQL** – for storing metadata and analytics
 
-
-## ▶️ How to Run the Project
-
-### Backend
-
-```bash
-cd backend
-pip install -r requirements.txt
-python main.py
-```
-
-Backend will run on:
-
-```bash
-http://localhost:5000
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Frontend will run on:
-
-```bash
-http://localhost:5173
-```
----
-
 ## 🏁 Conclusion
 
 Padh.AI is a practical RAG-based academic assistant that helps students turn static study material into interactive learning resources.
