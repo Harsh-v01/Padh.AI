@@ -30,10 +30,8 @@ async def check_plagiarism(text: str) -> float:
     plag_key = os.getenv("PLAG_CHECK")
 
     if not plag_key:
-        raise HTTPException(
-            status_code=500,
-            detail="PLAG_CHECK API key not configured in .env",
-        )
+        print("[PLAG DEBUG] No plagiarism API key configured. Skipping plagiarism check.")
+        return 0.0
 
     # 🔥 LIMIT TEXT (IMPORTANT)
     text = text[:PLAGIARISM_MAX_CHARS_FOR_CHECK]
