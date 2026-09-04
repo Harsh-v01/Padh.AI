@@ -1,9 +1,16 @@
 import { useState, useEffect } from 'react';
-import { 
-  FiUser, FiSettings, FiFileText, 
-  FiBookOpen, FiHeadphones, FiBell, FiCalendar, 
-  FiHelpCircle, FiUserPlus, FiLogOut, 
-  FiChevronRight, FiChevronDown
+import {
+  FiUser,
+  FiSettings,
+  FiFileText,
+  FiBookOpen,
+  FiHeadphones,
+  FiBell,
+  FiCalendar,
+  FiHelpCircle,
+  FiUserPlus,
+  FiChevronRight,
+  FiChevronDown
 } from 'react-icons/fi';
 import './Header.css';
 
@@ -130,17 +137,6 @@ function Header({ onNavigate, currentView }) {
       alert('Invite link copied to clipboard!');
     }
     
-    if (itemName === 'logout') {
-      console.log('Logout clicked');
-      // Handle logout logic here
-      // Clear user data, redirect to login, etc.
-      if (window.confirm('Are you sure you want to logout?')) {
-        // Clear localStorage
-        localStorage.clear();
-        // Redirect to login page or home
-        window.location.href = '/';
-      }
-    }
   };
 
   const toggleSection = (section) => {
@@ -293,19 +289,6 @@ function Header({ onNavigate, currentView }) {
                   </div>
                 );
               })}
-            </div>
-          </div>
-
-          {/* Logout - Centered Content */}
-          <div className="sidebar-bottom">
-            <div 
-              className={`logout-btn ${activeItem === 'logout' ? 'active' : ''}`}
-              onClick={() => handleItemClick('logout')}
-            >
-              <div className="logout-content">
-                <FiLogOut className="logout-icon" />
-                <span className="logout-text">Logout</span>
-              </div>
             </div>
           </div>
 

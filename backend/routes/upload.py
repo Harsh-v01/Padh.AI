@@ -1,145 +1,149 @@
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
-from services.supabaseClient import supabase_admin
+import io
+import os
+import uuid
+
+import aiofiles
+from fastapi import APIRouter, UploadFile, File, HTTPException
+from pypdf import PdfReader
+
+from services.databaseService import create_document
+from services.documind_rag import index_document
 from services.plagiarismService import (
     check_plagiarism,
     PLAGIARISM_THRESHOLD,
     PLAGIARISM_MAX_CHARS_FOR_CHECK,
     PLAGIARISM_FAIL_OPEN_ON_BALANCE_ERROR,
-    is_balance_error
+    is_balance_error,
 )
 from services.ocrService import extract_text_from_image
+from services.supabaseClient import supabase_admin
 from utils.auth import get_current_user
-
-from PyPDF2 import PdfReader
-import io
 
 router = APIRouter()
 
 
+async def _save_local(file_bytes: bytes, filename: str) -> str:
+    upload_directory = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)), "data", "uploads"
+    )
+    os.makedirs(upload_directory, exist_ok=True)
+    safe_name = os.path.basename(filename or "document")
+    file_path = os.path.join(upload_directory, f"{uuid.uuid4()}_{safe_name}")
+    async with aiofiles.open(file_path, "wb") as output_file:
+        await output_file.write(file_bytes)
+    return file_path
+
+
+def _supabase_upload(file_bytes: bytes, filename: str, user_id: str | None):
+    if not supabase_admin:
+        return None, None
+
+    folder = user_id or "guest"
+    file_path = f"{folder}/{uuid.uuid4()}_{os.path.basename(filename or 'document')}"
+    result = supabase_admin.storage.from_("documents").upload(
+        file_path,
+        file_bytes,
+        {"content-type": "application/pdf" if filename.lower().endswith(".pdf") else "application/octet-stream"},
+    )
+    if hasattr(result, "error") and result.error:
+        raise RuntimeError(str(result.error))
+
+    # The bucket is configured as public by the supplied schema.sql.
+    public_url = supabase_admin.storage.from_("documents").get_public_url(file_path)
+    return file_path, public_url
+
+
 @router.post("/")
-async def upload_file(file: UploadFile = File(...), user=Depends(get_current_user)):
+async def upload_file(file: UploadFile = File(...), user=__import__("fastapi").Depends(get_current_user)):
     try:
-        print("USER:", user.id)
-
-        # -------------------------------
-        # 1. READ FILE
-        # -------------------------------
+        filename = os.path.basename(file.filename or "document")
         file_bytes = await file.read()
+        if not file_bytes:
+            raise HTTPException(status_code=400, detail="Uploaded file is empty.")
 
-        # -------------------------------
-        # 2. EXTRACT TEXT (PDF + OCR + IMAGE)
-        # -------------------------------
         text_content = ""
 
-        # ✅ PDF handling
-        if file.filename.lower().endswith(".pdf"):
+        if filename.lower().endswith(".pdf"):
             try:
                 reader = PdfReader(io.BytesIO(file_bytes))
+                text_content = "\n\n".join(
+                    page.extract_text() or "" for page in reader.pages
+                )
+            except Exception as exc:
+                print("[PDF ERROR]", exc)
 
-                for page in reader.pages:
-                    text_content += page.extract_text() or ""
-
-                # 🔥 OCR fallback if PDF has no extractable text
-                if not text_content.strip():
-                    print("[OCR FALLBACK] Using OCR for scanned PDF")
+            if not text_content.strip():
+                try:
                     text_content = extract_text_from_image(file_bytes, "application/pdf")
+                except Exception as exc:
+                    print("[OCR FALLBACK ERROR]", exc)
 
-            except Exception as e:
-                print("[PDF ERROR]", e)
-                text_content = ""
-
-        # ✅ IMAGE handling (direct OCR)
         elif file.content_type and file.content_type.startswith("image/"):
-            print("[OCR] Processing image file")
             text_content = extract_text_from_image(file_bytes, file.content_type)
-
-        # ✅ OTHER FILES (txt, etc.)
         else:
+            text_content = file_bytes.decode(errors="ignore")
+
+        full_text = text_content.strip()
+
+        if full_text:
             try:
-                text_content = file_bytes.decode(errors="ignore")
-            except Exception as e:
-                print("[DECODE ERROR]", e)
-                text_content = ""
-
-        # -------------------------------
-        # 3. HANDLE EMPTY TEXT
-        # -------------------------------
-        if not text_content.strip():
-            print("[PLAG DEBUG] No text extracted, skipping plagiarism")
-            plagiarism_score = 0.0
-            full_text = ""
-        else:
-            # 🔥 KEEP FULL TEXT FOR STORAGE
-            full_text = text_content
-
-            # 🔥 USE LIMITED TEXT FOR PLAG CHECK
-            plag_text = text_content[:PLAGIARISM_MAX_CHARS_FOR_CHECK]
-
-            # -------------------------------
-            # 4. PLAGIARISM CHECK
-            # -------------------------------
-            try:
-                plagiarism_score = await check_plagiarism(plag_text)
-            except HTTPException as e:
-                detail = str(e.detail).lower()
-                print("[PLAG ERROR]", detail)
-
+                plagiarism_score = await check_plagiarism(
+                    full_text[:PLAGIARISM_MAX_CHARS_FOR_CHECK]
+                )
+            except HTTPException as exc:
+                detail = str(exc.detail).lower()
                 if PLAGIARISM_FAIL_OPEN_ON_BALANCE_ERROR and is_balance_error(detail):
-                    print("[PLAG] Skipping due to balance issue")
                     plagiarism_score = 0.0
                 else:
                     raise
+        else:
+            plagiarism_score = 0.0
 
-        print(f"[PLAG RESULT] {plagiarism_score}")
-
-        # -------------------------------
-        # 5. BLOCK HIGH PLAGIARISM
-        # -------------------------------
         if plagiarism_score >= PLAGIARISM_THRESHOLD:
-            raise HTTPException(status_code=400, detail="High plagiarism detected")
+            raise HTTPException(status_code=400, detail="High plagiarism detected.")
 
-        # -------------------------------
-        # 6. UPLOAD TO STORAGE
-        # -------------------------------
-        file_path = f"{user.id}/{file.filename}"
+        user_id = getattr(user, "id", None)
 
-        upload_res = supabase_admin.storage.from_("documents").upload(
-            file_path, file_bytes
+        # Supabase Storage is primary when configured; local storage remains a free fallback.
+        storage_path = None
+        public_url = None
+        if supabase_admin:
+            try:
+                storage_path, public_url = _supabase_upload(file_bytes, filename, user_id)
+            except Exception as exc:
+                print("[SUPABASE STORAGE ERROR] Falling back to local storage:", exc)
+
+        local_path = await _save_local(file_bytes, filename)
+
+        document_id = create_document(
+            file_name=filename,
+            file_path=local_path,
+            content=full_text,
+            plagiarism_score=plagiarism_score,
+            user_id=user_id,
+            file_url=public_url,
         )
 
-        if hasattr(upload_res, "error") and upload_res.error:
-            raise HTTPException(status_code=500, detail=str(upload_res.error))
+        # Index the extracted content in the integrated DocuMind vector store.
+        chunk_count = 0
+        if full_text:
+            try:
+                chunk_count = index_document(document_id, full_text, filename)
+            except Exception as exc:
+                # Upload must still succeed if the optional local vector dependencies are unavailable.
+                print("[RAG INDEX ERROR]", exc)
 
-        # -------------------------------
-        # 7. GET PUBLIC URL
-        # -------------------------------
-        public_url = supabase_admin.storage.from_("documents").get_public_url(file_path)
-
-        # -------------------------------
-        # 8. SAVE TO DATABASE (IMPORTANT)
-        # -------------------------------
-        db_res = supabase_admin.table("documents").insert({
-            "user_id": user.id,
-            "file_name": file.filename,
-            "file_url": public_url,
-            "plagiarism_score": plagiarism_score,
-            "content": full_text   # 🔥 STORED FOR SUMMARY / QUIZ / RAG
-        }).execute()
-
-        print("DB RESPONSE:", db_res.data)
-
-        # -------------------------------
-        # 9. RETURN RESPONSE (WITH ID)
-        # -------------------------------
         return {
-            "message": "Low plagiarism. Document successfully uploaded.",
+            "message": "Document successfully uploaded and indexed.",
             "file_url": public_url,
+            "file_path": local_path,
             "plagiarism_score": plagiarism_score,
-            "id": db_res.data[0]["id"]   # 🔥 REQUIRED FOR FRONTEND
+            "id": document_id,
+            "chunks_indexed": chunk_count,
         }
 
     except HTTPException:
         raise
-    except Exception as e:
-        print("UPLOAD ERROR:", e)
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as exc:
+        print("[UPLOAD ERROR]", exc)
+        raise HTTPException(status_code=500, detail=str(exc))

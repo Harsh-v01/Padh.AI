@@ -1,27 +1,46 @@
 from services.groqService import groq_chat
+from services.documind_rag import document_context
 
-SUMMARY_SYSTEM = """You are an expert document summarizer for a student learning platform called Padh.AI. \
-Generate a well-structured, comprehensive summary of the provided document. \
-Format your response using this exact structure:
+
+SUMMARY_SYSTEM = """
+You are an expert document summarizer for Padh.AI.
+
+Create a student-friendly, accurate summary grounded in the supplied document context.
+Use this exact structure:
 
 ## Summary
-A 2-4 sentence summary of what the document is about.
+2-4 sentences explaining the document's central idea.
 
 ## Key Points
-- Point 1
-- Point 2
-- Point 3
-(list all important points)
+- Important point
+- Important point
+- Important point
 
-Keep the language clear, concise, and student-friendly. Do NOT include any other sections."""
+Do not invent information. If the supplied context is incomplete, summarize only what it supports.
+"""
 
 
-async def summarize_document(document_name: str, content: str) -> str:
-    """Return a markdown-formatted summary for the given document content."""
-    if len(content) > 12000:
-        content = content[:12000] + "\n\n[Content truncated for processing...]"
+async def summarize_document(document_name: str, content: str, document_id: str | None = None) -> str:
+    context = ""
+    if document_id:
+        try:
+            context = document_context(
+                document_id,
+                purpose="identify the main ideas, definitions, arguments, processes and important facts",
+                k=16,
+            )
+        except Exception as exc:
+            print("[SUMMARY RAG ERROR]", exc)
 
-    user = f'Please summarize the following document titled "{document_name}":\n\n{content}'
+    if not context:
+        context = content[:14000]
+
+    user = (
+        f'Document title: "{document_name}"\n\n'
+        "Document context:\n"
+        f"{context[:14000]}"
+    )
+
     return await groq_chat(
         [
             {"role": "system", "content": SUMMARY_SYSTEM},

@@ -3,24 +3,31 @@ import './MainLayout.css';
 import QuickActions from '../QuickActions/QuickActions';
 import RecentDocuments from '../RecentDocuments/RecentDocuments';
 import ImageSection from "../ImageSection/ImageSection";
+import AboutPadhAI from '../AboutPadhAI/AboutPadhAI';
 
 function MainLayout({ onNavigate }) {
   return (
-    <div className="main-layout-wrapper">
-      <div className="main-layout-container">
+    <>
+      <div className="main-layout-wrapper">
+        <div className="main-layout-container">
 
-        {/* Left Side - Quick Actions */}
-        <div className="quick-actions-panel">
-          <QuickActions onNavigate={onNavigate} />
-        </div>
+          {/* Left Side - Quick Actions */}
+          <div className="quick-actions-panel">
+            <QuickActions onNavigate={onNavigate} />
+          </div>
 
-        {/* Right Side - Image Section + Recent Documents */}
-        <div className="recent-docs-panel">
-          <RecentDocuments />  
-          <ImageSection />     
+          {/* Right Side - Image Section + Recent Documents */}
+          <div className="recent-docs-panel">
+            <RecentDocuments />
+            <ImageSection />
+          </div>
+
         </div>
       </div>
-    </div>
+
+      {/* About Padh.AI */}
+      <AboutPadhAI />
+    </>
   );
 }
 

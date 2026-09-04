@@ -58,12 +58,6 @@ function QuickActions({ onNavigate }) {
         const file = event.target.files?.[0];
         if (!file) return;
 
-        const token = localStorage.getItem('token');
-        if (!token) {
-          alert('Please login first.');
-          return;
-        }
-
         const fileName = file.name;
         const fileSize = file.size || 0;
 
@@ -80,9 +74,6 @@ function QuickActions({ onNavigate }) {
 
         const uploadRes = await fetch(buildApiUrl('/upload'), {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
           body: formData,
         });
 

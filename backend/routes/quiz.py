@@ -571,18 +571,25 @@ async def generate_quiz(req: QuizGenerateRequest):
     topic = _normalize_text(req.topic)
     content = _normalize_text(req.content)
 
-    # 🔥 HANDLE DOCUMENT ID
+    # Document mode: retrieve the most relevant DocuMind chunks instead of sending
+    # the entire document to the LLM.
     if req.document_id:
-        from services.supabaseClient import supabase_admin
-        res = supabase_admin.table("documents") \
-            .select("*") \
-            .eq("id", req.document_id) \
-            .execute()
+        from services.databaseService import get_document
+        from services.documind_rag import document_context
 
-        if not res.data:
+        doc = get_document(req.document_id)
+        if not doc:
             raise HTTPException(status_code=404, detail="Document not found")
-        doc = res.data[0]
-        content = _normalize_text(doc.get("content"))
+
+        try:
+            content = _normalize_text(document_context(
+                req.document_id,
+                purpose="create academically useful multiple-choice questions from the document",
+                k=10,
+            ))
+        except Exception as exc:
+            print("[QUIZ RAG ERROR]", exc)
+            content = _normalize_text(doc.get("content"))
 
     # ❗ VALIDATION
     if not topic and not content:
@@ -615,18 +622,22 @@ async def generate_more_quiz(req: QuizGenerateMoreRequest):
     content = _normalize_text(req.content)
 
     if req.document_id:
-        from services.supabaseClient import supabase_admin
+        from services.databaseService import get_document
+        from services.documind_rag import document_context
 
-        res = supabase_admin.table("documents") \
-            .select("*") \
-            .eq("id", req.document_id) \
-            .execute()
-
-        if not res.data:
+        doc = get_document(req.document_id)
+        if not doc:
             raise HTTPException(status_code=404, detail="Document not found")
 
-        doc = res.data[0]
-        content = _normalize_text(doc.get("content"))
+        try:
+            content = _normalize_text(document_context(
+                req.document_id,
+                purpose="create new multiple-choice questions without repeating common ideas",
+                k=10,
+            ))
+        except Exception as exc:
+            print("[QUIZ RAG ERROR]", exc)
+            content = _normalize_text(doc.get("content"))
 
     if not topic and not content:
         raise HTTPException(status_code=400, detail="Either topic or content must be provided.")

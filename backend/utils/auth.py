@@ -1,29 +1,29 @@
-from fastapi import Depends, HTTPException
+from typing import Optional
+from fastapi import Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from supabase import create_client
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
+from services.supabaseClient import supabase_admin
 
-security = HTTPBearer()
-
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
-
-supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+security = HTTPBearer(auto_error=False)
 
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
+class GuestUser:
+    id = None
 
-    try:
-        user = supabase.auth.get_user(token)
 
-        if not user or not user.user:
-            raise HTTPException(status_code=401, detail="Invalid token")
-
-        return user.user
-
-    except Exception:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+def get_current_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+):
+    """
+    Auth is optional during the current development phase.
+    If a valid Supabase access token is supplied, use that user.
+    Otherwise return a guest identity so the app can be used before Auth is wired.
+    """
+    if credentials and supabase_admin:
+        try:
+            result = supabase_admin.auth.get_user(credentials.credentials)
+            if result and result.user:
+                return result.user
+        except Exception as exc:
+            print("[AUTH] Token validation failed; using guest mode:", exc)
+    return GuestUser()

@@ -30,18 +30,7 @@ const RecentDocuments = () => {
   // Load per-user documents from backend (Supabase-backed).
   const loadDocuments = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setAllDocuments([]);
-        setDocuments([]);
-        return;
-      }
-
-      const response = await fetch(buildApiUrl('/documents/'), {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(buildApiUrl('/documents/'));
 
       if (!response.ok) {
         console.error('Failed to fetch documents:', response.status);

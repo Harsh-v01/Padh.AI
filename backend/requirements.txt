@@ -14,3 +14,5 @@ pypdf
 torch
 numpy
 supabase
+chromadb>=0.5.23
+aiofiles>=24.1.0

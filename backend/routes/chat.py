@@ -4,7 +4,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from services.chatService import socratic_chat
-from services.supabaseClient import supabase_admin
+from services.databaseService import get_document
+from services.documind_rag import retrieve
 
 router = APIRouter()
 
@@ -16,7 +17,7 @@ class ChatMessage(BaseModel):
 
 class ChatRequest(BaseModel):
     messages: List[ChatMessage]
-    document_id: Optional[str] = None   # 🔥 NEW
+    document_id: Optional[str] = None
 
 
 @router.post("")
@@ -25,45 +26,40 @@ async def chat(req: ChatRequest):
         raise HTTPException(status_code=400, detail="messages required")
 
     try:
-        # -------------------------------
-        # 1. BASE CHAT MESSAGES
-        # -------------------------------
-        messages = [
-            {"role": m.role, "content": m.content}
-            for m in req.messages
-        ]
+        messages = [{"role": m.role, "content": m.content} for m in req.messages]
 
-        # -------------------------------
-        # 2. DOCUMENT CONTEXT (IF EXISTS)
-        # -------------------------------
         if req.document_id:
-            doc_res = supabase_admin.table("documents") \
-                .select("content, file_name") \
-                .eq("id", req.document_id) \
-                .single() \
-                .execute()
+            doc = get_document(req.document_id)
+            if not doc:
+                raise HTTPException(status_code=404, detail="Document not found")
 
-            doc = doc_res.data
+            latest_user = next(
+                (m["content"] for m in reversed(messages) if m["role"] == "user"),
+                "",
+            )
+            chunks = retrieve(latest_user, req.document_id, k=5)
+            context = "\n\n".join(
+                f"[Source {i + 1}]\n{item['text']}" for i, item in enumerate(chunks)
+            )
 
-            if doc and doc.get("content"):
-                # 🔥 limit to avoid token overflow
-                context = doc["content"][:4000]
+            if context:
+                messages.insert(
+                    0,
+                    {
+                        "role": "system",
+                        "content": (
+                            "Use the retrieved document context below to answer the student's "
+                            "question. Do not invent facts that are not supported by it. "
+                            "If the document does not contain the answer, say so clearly.\n\n"
+                            f"Document: {doc.get('file_name', 'Document')}\n{context}"
+                        ),
+                    },
+                )
 
-                messages.append({
-                    "role": "system",
-                    "content": (
-                        f"You are answering based on the document: {doc.get('file_name')}\n\n"
-                        f"Document content:\n{context}"
-                    )
-                })
+        return {"message": await socratic_chat(messages)}
 
-        # -------------------------------
-        # 3. RUN SOCrATIC CHAT
-        # -------------------------------
-        reply = await socratic_chat(messages)
-
-        return {"message": reply}
-
-    except Exception as e:
-        print("[CHAT ERROR]", e)
-        raise HTTPException(status_code=500, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception as exc:
+        print("[CHAT ERROR]", exc)
+        raise HTTPException(status_code=500, detail=str(exc))

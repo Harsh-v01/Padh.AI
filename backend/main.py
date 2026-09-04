@@ -3,16 +3,16 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from services.databaseService import init_db
 # Routers
 from routes import chat, ocr, plagiarism, summary
 from routes import quiz
 from routes.conceptualRoutes import router as conceptual_router
-from routes import auth
 from routes import upload
 from routes.documents import router as documents_router
 
 load_dotenv()
+init_db()
 
 app = FastAPI(title="Padh.AI API")
 
@@ -46,7 +46,6 @@ app.include_router(summary.router,     prefix="/api/summary")
 app.include_router(plagiarism.router,  prefix="/api/plagiarism-check")
 app.include_router(ocr.router,         prefix="/api/ocr")
 app.include_router(chat.router,        prefix="/api/chat")
-app.include_router(auth.router,        prefix="/api/auth")
 app.include_router(upload.router,      prefix="/api/upload")
 app.include_router(documents_router,   prefix="/api/documents")
 
